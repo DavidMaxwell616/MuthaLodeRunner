@@ -41,10 +41,10 @@ var blast_count;
 var melt_block_used;
 var delay;
 var melt_counter;
-var monk_moving[MAX_MONKS],monk_x[MAX_MONKS],monk_y[MAX_MONKS];
-var monk_x_block[MAX_MONKS],monk_y_block[MAX_MONKS];
+//var monk_moving[MAX_MONKS],monk_x[MAX_MONKS],monk_y[MAX_MONKS];
+//var monk_x_block[MAX_MONKS],monk_y_block[MAX_MONKS];
 var start_level,turn=0;		//start from level selected under options
-var map[BACKGROUND_WIDTH][BACKGROUND_HEIGHT];		//map
+//var map[BACKGROUND_WIDTH][BACKGROUND_HEIGHT];		//map
 var player_x,player_y,player_moving=LEFT;
 var player_x_block, player_y_block;	//location of the block
 var timer;		//timer of the game
@@ -53,7 +53,7 @@ var blast;
 var speed;				//speed of the game
 var score, dels;		//game score and number of rows deleted
 var high_score;
-var melt_block_x_block[5],melt_block_y_block[5];
+//var melt_block_x_block[5],melt_block_y_block[5];
 var num_monks=3;
 var numgold=5;
 var numblocks,index,blockcount;
@@ -63,3 +63,4 @@ var seq_left_blast=0,seq_right_blast=9;
 var seq_monk_left=10,seq_monk_right=0,seq_monk_fall=20,seq_monk_climb=24;
 var seq_monk_rope_right=42,seq_monk_rope_left=32;
 var seq_killing1,seq_killing2=5;
+var startGame = true;

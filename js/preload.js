@@ -1,97 +1,37 @@
 function preload() {
-  const TITLE_WIDTH = 867;
-  const TITLE_HEIGHT = 142;
+  game.load.onLoadStart.add(loadStart, this);
+  game.load.onFileComplete.add(fileComplete, this);
+  game.load.onLoadComplete.add(loadComplete, this);
+  loadText = game.add.text(32, 32, '', {
+    fill: '#ffffff',
+  });
+  
+this.load.path = '../assets/images/';
+  // this.load.image('background', 'background.JPG');
+  // this.load.image('maxxdaddy', 'maxxdaddy.gif');
+  // this.load.image('UpperArmImage', 'upperarm.png');
+  // this.load.image('LowerArmImage', 'lowerarm.png');
+  // this.load.image('bodyImage', 'jackbody.png');
+  // this.load.image('thighImage', 'jackthigh.png');
+  // this.load.image('legImage', 'jackleg.png');
+  // this.load.image('headImage', 'jackhead.png');
+  // this.load.image('footImage', 'jackfoot.png');
+ this.load.start();
 
-  this.scale.pageAlignHorizontally = true;
-  this.scale.pageAlignVertically = true;
-  this.scale.refresh();
-
-  showLoader(this);
-  this.load.path = '../assets/images/';
-  this.load.image('splash', 'splash.png');
-  this.load.image('scoreboard', 'scoreboard.png');
-  this.load.image('maxxdaddy', 'maxxdaddy.gif');
-  this.load.image('level 1', 'level_1.png');
-  this.load.image('level 2', 'level_2.png');
-  this.load.image('level 3', 'level_3.png');
-  this.load.image('level 4', 'level_4.png');
-  this.load.image('level 5', 'level_5.png');
-  this.load.image('level 6', 'level_6.png');
-  this.load.image('level 7', 'level_7.png');
-  this.load.image('level 8', 'level_8.png');
-  this.load.image('level 9', 'level_9.png');
-  this.load.image('level 10', 'level_10.png');
-  this.load.spritesheet(
-    'title',
-    'title.png', {
-      frameWidth: TITLE_WIDTH,
-      frameHeight: TITLE_HEIGHT
-    }
-  );
-
-  this.load.spritesheet('player', 'player.png', {
-    frameWidth: 30,
-    frameHeight: 54
-  }, );
-
-  this.load.image('bullet', 'bullet.png');
-
-  this.load.spritesheet('borg', 'borg.png', {
-    frameWidth: 86,
-    frameHeight: 54
-  }, );
-
-  this.load.spritesheet('guard', 'guard.png', {
-    frameWidth: 55,
-    frameHeight: 46
-  }, );
-  this.load.path = '../assets/json/';
-  this.load.json('levelData', 'level_data.json');
 }
 
-function showLoader(game) {
-  var progressBar = game.add.graphics();
-  var progressBox = game.add.graphics();
-  progressBox.fillStyle(0x222222, 0.8);
-  progressBox.fillRect(340, 270, 320, 50);
-  game.load.on('progress', function (value) {});
+function loadStart() {
+  loadText.setText('Loading ...');
+}
 
-  game.load.on('fileprogress', function (file) {});
+function loadComplete() {
+  loadText.setText('Load Complete');
+  loadText.destroy();
+}
+//	This callback is sent the following parameters:
+function fileComplete(progress, cacheKey, success, totalLoaded, totalFiles) {
 
-  game.load.on('complete', function () {
-    progressBar.destroy();
-    progressBox.destroy();
-    loadingText.destroy();
-    percentText.destroy();
-  });
-  game.load.on('progress', function (value) {
-    progressBar.clear();
-    progressBar.fillStyle(0xff4500, 1);
-    progressBar.fillRect(350, 280, 300 * value, 30);
-    percentText.setText(parseInt(value * 100) + '%');
-  });
+  loadText.setText("File Complete: " + progress + "% - " + totalLoaded + " out of " + totalFiles);
 
-  var width = game.cameras.main.width;
-  var height = game.cameras.main.height;
-  var loadingText = game.make.text({
-    x: width / 2,
-    y: height / 2 - 50,
-    text: 'Loading...',
-    style: {
-      font: '20px monospace',
-      fill: '#ffffff'
-    }
-  });
-  loadingText.setOrigin(0.5, 0.5);
 
-  var percentText = game.make.text({
-    x: width / 2,
-    y: height / 2 - 5,
-    text: '0%',
-    style: {
-      font: '18px monospace',
-      fill: '#ffffff'
-    }
-  });
-  percentText.setOrigin(0.5, 0.5);
 }
