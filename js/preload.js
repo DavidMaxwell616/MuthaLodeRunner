@@ -7,15 +7,25 @@ function preload() {
   });
   
 this.load.path = '../assets/images/';
-  // this.load.image('background', 'background.JPG');
-  // this.load.image('maxxdaddy', 'maxxdaddy.gif');
-  // this.load.image('UpperArmImage', 'upperarm.png');
+this.load.spritesheet('player_run', 'player-run.png', {
+  frameWidth: 30,
+  frameHeight: 54
+}, );
+this.load.spritesheet('blocks', 'blocks.png', {
+  frameWidth: 22,
+  frameHeight: 19
+}, );
+
+  this.load.image('splash', 'splash.png');
+  this.load.image('maxxdaddy', 'maxxdaddy.gif');
   // this.load.image('LowerArmImage', 'lowerarm.png');
   // this.load.image('bodyImage', 'jackbody.png');
   // this.load.image('thighImage', 'jackthigh.png');
   // this.load.image('legImage', 'jackleg.png');
   // this.load.image('headImage', 'jackhead.png');
   // this.load.image('footImage', 'jackfoot.png');
+  this.load.path = '../assets/json/';
+  this.load.json('levelData', 'levels.json');
  this.load.start();
 
 }

@@ -28,7 +28,22 @@ const BLAST_RIGHT =  7;
 const ROPE_RIGHT  =  8;
 const ROPE_LEFT   =  9;
 const TRAPPED     =  10;
+const MAP_HEIGHT = 16;
+const BASE_TILE_X = 40;
+const BASE_TILE_Y = 44;
 
+const TILE_MAP = {
+  '#': 'brick',
+  $: 'coin',
+  '0': 'guard',
+  '-': 'rope',
+  H: 'ladder',
+  S: 'hLadder',
+  '@': 'block',
+};
+
+var block;
+var currLevel;
 var forcefall=0;
 var round=0;
 var level=START_LEVEL;
@@ -63,4 +78,4 @@ var seq_left_blast=0,seq_right_blast=9;
 var seq_monk_left=10,seq_monk_right=0,seq_monk_fall=20,seq_monk_climb=24;
 var seq_monk_rope_right=42,seq_monk_rope_left=32;
 var seq_killing1,seq_killing2=5;
-var startGame = true;
+var startGame = false;

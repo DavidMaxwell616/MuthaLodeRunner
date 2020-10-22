@@ -1,30 +1,19 @@
 function mainMenuCreate(scene) {
-  // splash = scene.add.image(0, 0, 'splash');
-  // var config = scene.game.config;
-  // splash.setDisplaySize(scene.game.config.width, scene.game.config.height);
-  // splash.setOrigin(0, 0);
-  // maxxdaddy = scene.add.image(config.width * 0.9, config.height * 0.87, 'maxxdaddy');
-  // title = scene.add.sprite(0, 0, 'title');
+  splash = game.add.image(0, 0, 'splash');
+  splash.width = game.width;
+  splash.height = game.height;
+  maxxdaddy = game.add.image(game.width * 0.75, game.height * 0.91, 'maxxdaddy');
+  game.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+}
 
-  // var animConfig = {
-  //   key: 'title',
-  //   frames: scene.anims.generateFrameNumbers('title'),
-  //   frameRate: 6,
-  //   repeat: -1
-  // };
-
-  // scene.anims.create(animConfig);
-  // title.setOrigin(0, 0);
-  // title.setPosition(10, 80);
-  // title.anims.load('title');
-  // title.anims.play('title');
-  // scene.scale.resize(config.width, config.height);
-  // scene.input.keyboard.on('keydown_SPACE', function (event) {
-  //   if (startGame)
-  //     return;
-  //   splash.visible = false;
-  //   title.visible = false;
-  //   startGame = true;
-  //   gameCreate(scene);
-  // });
+function mainMenuUpdate() {
+  
+  if (game.spaceKey.isDown) {
+    game.spaceKey = null;
+    splash.visible = false;
+    maxxdaddy.visible = false;
+    gameCreate();
+    buildLevel();
+    startGame = true;
+  }
 }
