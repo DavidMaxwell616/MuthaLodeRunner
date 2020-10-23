@@ -5,16 +5,11 @@ function preload() {
   loadText = game.add.text(32, 32, '', {
     fill: '#ffffff',
   });
-  
+  this.  
 this.load.path = '../assets/images/';
-this.load.spritesheet('player_run', 'player-run.png', {
-  frameWidth: 30,
-  frameHeight: 54
-}, );
-this.load.spritesheet('blocks', 'blocks.png', {
-  frameWidth: 22,
-  frameHeight: 19
-}, );
+this.load.spritesheet('player_run', 'player-run.png', 30,34);
+this.load.spritesheet('blocks', 'blocks.png', 22,19);
+ 
 
   this.load.image('splash', 'splash.png');
   this.load.image('maxxdaddy', 'maxxdaddy.gif');
@@ -28,9 +23,7 @@ this.load.spritesheet('blocks', 'blocks.png', {
   this.load.json('levelData', 'levels.json');
  this.load.start();
 
-}
-
-function loadStart() {
+adStart() {
   loadText.setText('Loading ...');
 }
 
