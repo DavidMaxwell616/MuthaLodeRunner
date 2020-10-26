@@ -9,21 +9,14 @@ function preload() {
 this.load.path = '../assets/images/';
 this.load.spritesheet('player_run', 'player-run.png', 30,34);
 this.load.spritesheet('blocks', 'blocks.png', 22,19);
- 
-
   this.load.image('splash', 'splash.png');
   this.load.image('maxxdaddy', 'maxxdaddy.gif');
-  // this.load.image('LowerArmImage', 'lowerarm.png');
-  // this.load.image('bodyImage', 'jackbody.png');
-  // this.load.image('thighImage', 'jackthigh.png');
-  // this.load.image('legImage', 'jackleg.png');
-  // this.load.image('headImage', 'jackhead.png');
-  // this.load.image('footImage', 'jackfoot.png');
+  
   this.load.path = '../assets/json/';
   this.load.json('levelData', 'levels.json');
  this.load.start();
 
-adStart() {
+loadStart() {
   loadText.setText('Loading ...');
 }
 
