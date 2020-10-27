@@ -6,17 +6,18 @@ function preload() {
     fill: '#ffffff',
   });
   this.  
-this.load.path = '../assets/images/';
-this.load.spritesheet('player_run', 'player-run.png', 30,34);
-this.load.spritesheet('blocks', 'blocks.png', 22,19);
-  this.load.image('splash', 'splash.png');
-  this.load.image('maxxdaddy', 'maxxdaddy.gif');
+  game.load.path = '../assets/images/';
+  //game.load.spritesheet('player_run', 'player-run.png', 30,34);
+  game.load.spritesheet('blocks', 'blocks.png', 21,19);
+  game.load.image('splash', 'splash.png');
+  game.load.image('maxxdaddy', 'maxxdaddy.gif');
   
-  this.load.path = '../assets/json/';
-  this.load.json('levelData', 'levels.json');
- this.load.start();
+  game.load.path = '../assets/json/';
+  game.load.json('levelData', 'levels.json');
+  game.load.start();
+}
 
-loadStart() {
+function loadStart (){
   loadText.setText('Loading ...');
 }
 
@@ -26,8 +27,5 @@ function loadComplete() {
 }
 //	This callback is sent the following parameters:
 function fileComplete(progress, cacheKey, success, totalLoaded, totalFiles) {
-
-  loadText.setText("File Complete: " + progress + "% - " + totalLoaded + " out of " + totalFiles);
-
-
+ loadText.setText("File Complete: " + progress + "% - " + totalLoaded + " out of " + totalFiles);
 }

@@ -1,4 +1,5 @@
-var game = new Phaser.Game(640, 480, Phaser.AUTO, 'phaser-example', 
+var game = new Phaser.Game(BASE_TILE_WIDTH*MAP_WIDTH, BASE_TILE_HEIGHT*MAP_HEIGHT, 
+  Phaser.AUTO, 'phaser-example', 
 {preload: preload, create: create, update: update});
 var _scene;
 
@@ -18,24 +19,25 @@ function gameCreate() {
 
   levelData = game.cache.getJSON('levelData');
   currLevel = levelData.levels['level-001'];
-  block = game.add.sprite(0, 0, 'blocks');
-    buildLevel(currLevel);
+  blocks = game.add.sprite(0, 0, 'blocks');
+  buildLevel(currLevel);
 }
 
-function buildLevel(levelMap) {
-  if(levelMap!=undefined){
-  for (let y = 0; y < levelMap.length; y++) {
-    for (let x = 0; x < levelMap[y].length; x++) {
-      const tile = levelMap[y][x];
-      const blockX = BASE_TILE_X * x;
-      const blockY = BASE_TILE_Y * y;
-      const value = TILE_MAP[tile];
-      if (value === '#'){
-         var sprite = game.add.sprite(blockX, blockY, value);
-      }
-    }
-    }
-  }
+function buildLevel(currLevel) {
+  for (let y = 0; y < currLevel.length; y++) {
+    console.log(y);
+    for (let x = 0; x < currLevel[y].length; x++) {
+   const tile = currLevel[y][x];
+     const blockX = BASE_TILE_WIDTH * x;
+     const blockY = BASE_TILE_HEIGHT * y;
+     let sprite;
+     if (tile === '$') totalCoins++;
+     const value = TILE_MAP[tile];
+     if(value!=undefined){
+        sprite = game.add.sprite(blockX, blockY, 'blocks', value);
+     }
+   }
+ }
 }
 
 function update() {

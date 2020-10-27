@@ -1,6 +1,7 @@
-const BASE_TILE_X = 40;
-const BASE_TILE_Y = 44;
-
+const BASE_TILE_WIDTH = 21;
+const BASE_TILE_HEIGHT = 19;
+const MAP_WIDTH = 28;
+const MAP_HEIGHT = 16;
 const TILE_MAP = {
 ' ': 0, //air
 '#': 1, //brick
@@ -14,12 +15,6 @@ const TILE_MAP = {
 
 let player;
 let guards;
-let ladders;
-let cursors;
-let coins;
-let ropes;
-let hLadders;
-let bricks;
 let blocks;
 let levels;
 let onRope = false;
