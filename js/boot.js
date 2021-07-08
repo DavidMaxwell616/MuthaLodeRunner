@@ -45,9 +45,16 @@ let startGame = false;
 let splash;var i=0;
 let fireKey;
 const RUNNER_SPEED = 4;
-const playerstate = {
-    'standing': 0, 
-    'running': 1, 
-    'falling' : 2, 
-    'onRope' : 3
-    };
+const PLAYER_STATE = {
+'STILL':0,
+'RIGHT':1,
+'LEFT' :2,
+'UP' : 3,
+'DOWN' : 4,
+'FALLING' : 5,
+'BLAST_LEFT' : 6,
+'BLAST_RIGHT' : 7,
+'ROPE_RIGHT' : 8,
+'ROPE_LEFT' :9,
+'TRAPPED' : 10
+}

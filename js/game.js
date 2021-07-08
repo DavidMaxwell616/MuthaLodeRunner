@@ -17,7 +17,7 @@ function gameCreate() {
     player = game.add.image(400, 225, 'player');
     scaleToGame(player,.036,.036);
   game.cursors = game.input.keyboard.createCursorKeys();
-  player.state = playerstate.standing;
+  player.state = PLAYER_STATE.STILL;
   player.frame = 30;
 }
 
@@ -94,20 +94,20 @@ function update() {
     return;
   }
 
-  if(player.state==playerstate.running)
+  if(player.state!=PLAYER_STATE.STILL)
   player.frame++;
   
   if (game.cursors.left.isDown) {
-    player.state = playerstate.running;
+    player.state = PLAYER_STATE.LEFT;
     playerRun(-RUNNER_SPEED);
   }
   if (game.cursors.right.isDown) {
-   player.state = playerstate.running;
+   player.state = PLAYER_STATE.RIGHT;
     playerRun(RUNNER_SPEED);
   }
   if(game.cursors.right.isUp && game.cursors.left.isUp)
   {
-    player.state = playerstate.standing;
+    player.state = PLAYER_STATE.STILL;
     player.frame = 30;
   }
 }
