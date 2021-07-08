@@ -19,46 +19,26 @@ function gameCreate() {
   game.cursors = game.input.keyboard.createCursorKeys();
   player.state = PLAYER_STATE.STILL;
   player.frame = 30;
+  drawInfoText(
+    `LEVEL: ${level}`,
+    game.width/2,
+    220,
+    64,
+    COLOR_WHITE,
+    'IMPACT',
+    5000,
+  );
+  drawStats();
+
 }
 
-function drawInfoText(text, x, y, size, color, font, delay) {
-  infoText = game.add.text(x, y, text, {
-    fill: color,
-    font: `${size}pt ${font}`,
-  });
-  infoText.updateText();
-  // infoText.anchor.setTo(0.5, 0.5);
- if(delay>0) 
-    textTimer = game.time.events.add(delay, infoText.destroy, infoText);
-  infoText.anchor.setTo(0.5);
-}
-
-function drawText(x, y, str) {
-  let newX = x;
-  const text = str.toUpperCase();
-  for (let i = 0; i < text.length; i++) {
-    const code = text.charAt(i);
-    const frame = textFrames[code];
-    const letter = textTiles.children[i];
-    // console.log(letter);
-    if (typeof frame !== 'undefined') {
-      letter.x = newX;
-      letter.y = y;
-      letter.alive = true;
-      letter.visible = true;
-      letter.frame = frame;
-      newX += 38;
-    } else {
-      newX += 20;
-    }
-  }
-}
   function scaleToGame(obj,wpercent,hpercent)
   {
       obj.width=game.width*wpercent;
       obj.height=game.width*hpercent;
       obj.scale.y=obj.scale.x;
     }
+
     function drawInfoText(text, x, y, size, color, font, delay) {
       infoText = game.add.text(x, y, text, {
         fill: color,
@@ -69,6 +49,7 @@ function drawText(x, y, str) {
      if(delay>0) 
         textTimer = game.time.events.add(delay, infoText.destroy, infoText);
       infoText.anchor.setTo(0.5);
+      return infoText;
     }
     
   function buildLevel(levelMap) {
@@ -88,6 +69,36 @@ function drawText(x, y, str) {
     }
   }
 
+  function drawStats(){
+  levelText = drawInfoText(
+    `LEVEL: ${level}`,
+    100,
+    game.height-50,
+    32,
+    COLOR_WHITE,
+    'IMPACT',
+    0,
+  );
+  livesText = drawInfoText(
+    `LIVES: ${lives}`,
+    400,
+    game.height-50,
+    32,
+    COLOR_WHITE,
+    'IMPACT',
+    0,
+  );
+  scoreText = drawInfoText(
+    `SCORE: ${score}`,
+    680,
+    game.height-50,
+    32,
+    COLOR_WHITE,
+    'IMPACT',
+    0,
+  );
+
+}
 function update() {
   if (!startGame) {
     mainMenuUpdate();
@@ -110,6 +121,13 @@ function update() {
     player.state = PLAYER_STATE.STILL;
     player.frame = 30;
   }
+updateStats();
+}
+
+function updateStats(){
+  levelText.setText('LEVEL: ' +level);
+  livesText.setText('LIVES: '+lives);
+  scoreText.setText('SCORE: ' + score);
 }
 
 function playerRun(direction){

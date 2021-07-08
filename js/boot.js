@@ -22,6 +22,7 @@ let onRope = false;
 let climbing = false;
 let running = false;
 
+const COLOR_WHITE = 'rgb(255,255,255)';
 let onLadder = false;
 let onHLadder = false;
 let score = 0;
