@@ -10,12 +10,18 @@ function create() {
 }
 
 function gameCreate() {
+  graphics = game.add.graphics(0, 0);
+if (localStorage.getItem(localStorageName) == null)
+    highScore = 0;
+ else 
+    highScore = localStorage.getItem(localStorageName);
   blocks = game.add.sprite(0, 0, 'blocks');
    levelData = game.cache.getJSON('levelData');
    currLevel = levelData.levels['level-001'];
    buildLevel(currLevel);
     player = game.add.image(400, 225, 'player');
     scaleToGame(player,.036,.036);
+    player.anchor.setTo(0);
   game.cursors = game.input.keyboard.createCursorKeys();
   player.state = PLAYER_STATE.STILL;
   player.frame = 30;
@@ -64,6 +70,9 @@ function gameCreate() {
         if(value!=undefined){
            sprite = game.add.sprite(blockX, blockY, 'blocks', value);
             scaleToGame(sprite,.036,.036);
+            blockSizeX = sprite.width;
+            blockSizeY = sprite.height;
+            if (DEBUG_MODE) drawRectangle(sprite);
           }
       }
     }
@@ -105,15 +114,40 @@ function update() {
     return;
   }
 
-  if(player.state!=PLAYER_STATE.STILL)
+var playerBlockX = Math.floor(player.x/blockSizeX)+1;
+var playerBlockY = Math.floor(player.y/blockSizeY)+1;
+player.BlockOn = {y: playerBlockY,x: playerBlockX};
+player.BlockAbove = {y: playerBlockY-1,x: playerBlockX}; 
+player.BlockBelow = {y: playerBlockY+1,x: playerBlockX};
+player.BlockLeft = {x: playerBlockX-1,y: playerBlockY};
+player.BlockRight = {x: playerBlockX+1,y: playerBlockY};
+//drawRectangle(player);
+var block = GetBlockValue(player.BlockBelow);
+//console.log(block);
+switch (block) {
+  case '#':
+    break;
+    case '':
+      //player.playerMode = PLAYER_STATE.FALLING;
+      break;
+  
+  default:
+    break;
+}
+
+if(player.state!=PLAYER_STATE.STILL)
   player.frame++;
   
-  if (game.cursors.left.isDown) {
+  if (game.cursors.left.isDown && player.x>0) {
+if(player.state == PLAYER_STATE.STILL)
+player.x-=15;
     player.state = PLAYER_STATE.LEFT;
     playerRun(-RUNNER_SPEED);
   }
-  if (game.cursors.right.isDown) {
-   player.state = PLAYER_STATE.RIGHT;
+  if (game.cursors.right.isDown && player.x<game.width) {
+    if(player.state == PLAYER_STATE.STILL)
+    player.x+=15;
+       player.state = PLAYER_STATE.RIGHT;
     playerRun(RUNNER_SPEED);
   }
   if(game.cursors.right.isUp && game.cursors.left.isUp)
@@ -124,6 +158,16 @@ function update() {
 updateStats();
 }
 
+function GetBlockValue(block){
+return(currLevel[block.y][block.x]);
+}
+
+function drawRectangle(sprite){
+  graphics.lineStyle(1, 0xff);
+  graphics.drawRect(sprite.x,sprite.y,Math.abs(sprite.width),Math.abs(sprite.height));
+}
+
+
 function updateStats(){
   levelText.setText('LEVEL: ' +level);
   livesText.setText('LIVES: '+lives);
@@ -131,7 +175,9 @@ function updateStats(){
 }
 
 function playerRun(direction){
-  player.scale.x=direction<0?1:-1;
+  var scale = direction<0?1:-1;
+  player.scale.x=scale;
   player.frame = player.frame<11?player.frame++:player.frame=1;
+  player.width = blockSizeX * scale ;
   player.x+=direction;
 }

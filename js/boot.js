@@ -13,6 +13,11 @@ const TILE_MAP = {
 '@' : 7, //block
 };
 const GAME_SCALE = 1.35;
+const DEBUG_MODE = true;
+let graphics;
+let blockSizeX;
+let blockSizeY;
+let localStorageName = "MuthaLodeRunner";
 
 let player;
 let guards;
