@@ -23,7 +23,7 @@ if (localStorage.getItem(localStorageName) == null)
     scaleToGame(player,.036,.036);
     player.anchor.setTo(0);
   game.cursors = game.input.keyboard.createCursorKeys();
-  player.state = PLAYER_STATE.STILL;
+  player.playerMode = PLAYER_STATE.STILL;
   player.frame = 30;
   drawInfoText(
     `LEVEL: ${level}`,
@@ -114,47 +114,60 @@ function update() {
     return;
   }
 
-var playerBlockX = Math.floor(player.x/blockSizeX)+1;
+var playerBlockX = Math.floor(player.x/blockSizeX);
 var playerBlockY = Math.floor(player.y/blockSizeY)+1;
 player.BlockOn = {y: playerBlockY,x: playerBlockX};
 player.BlockAbove = {y: playerBlockY-1,x: playerBlockX}; 
 player.BlockBelow = {y: playerBlockY+1,x: playerBlockX};
-player.BlockLeft = {x: playerBlockX-1,y: playerBlockY};
-player.BlockRight = {x: playerBlockX+1,y: playerBlockY};
-//drawRectangle(player);
-var block = GetBlockValue(player.BlockBelow);
-//console.log(block);
-switch (block) {
-  case '#':
-    break;
-    case '':
-      //player.playerMode = PLAYER_STATE.FALLING;
-      break;
+player.BlockLeft = {y: playerBlockY,x: playerBlockX-1};
+player.BlockRight = {y: playerBlockY,x: playerBlockX+1};
+// var block = GetBlockValue(player.BlockOn);
+// switch (block) {
+//   case 'H':
+//       player.playerMode = PLAYER_STATE.CLIMBING;
+//       break;
+//     case '':
+//       //player.playerMode = PLAYER_STATE.FALLING;
+//       break;
   
+//   default:
+//     break;
+// }
+
+block = GetBlockValue(player.BlockBelow);
+switch (block) {
+    case ' ':
+      player.playerMode = PLAYER_STATE.FALLING;
+      break;
+      case 'H':
+        player.playerMode = PLAYER_STATE.CLIMBING;
+        break;
   default:
+    console.log(block);
     break;
 }
 
-if(player.state!=PLAYER_STATE.STILL)
+if(player.playerMode!=PLAYER_STATE.STILL)
   player.frame++;
-  
+  if(player.playerMode!=PLAYER_STATE.FALLING){
   if (game.cursors.left.isDown && player.x>0) {
-if(player.state == PLAYER_STATE.STILL)
+if(player.playerMode == PLAYER_STATE.STILL && player.playerMode!=PLAYER_STATE.FALLING)
 player.x-=15;
-    player.state = PLAYER_STATE.LEFT;
+    player.playerMode = PLAYER_STATE.LEFT;
     playerRun(-RUNNER_SPEED);
   }
   if (game.cursors.right.isDown && player.x<game.width) {
-    if(player.state == PLAYER_STATE.STILL)
-    player.x+=15;
-       player.state = PLAYER_STATE.RIGHT;
+    if(player.playerMode == PLAYER_STATE.STILL){
+    player.x+=RUNNER_SPEED;
+       player.playerMode = PLAYER_STATE.RIGHT;}
     playerRun(RUNNER_SPEED);
   }
   if(game.cursors.right.isUp && game.cursors.left.isUp)
   {
-    player.state = PLAYER_STATE.STILL;
+    player.playerMode = PLAYER_STATE.STILL;
     player.frame = 30;
   }
+}
 updateStats();
 }
 
