@@ -21,6 +21,9 @@ let localStorageName = "MuthaLodeRunner";
 
 let player;
 let guards;
+let objects;
+let ladders;
+let gold;
 let blocks;
 let levels;
 let onRope = false;
@@ -46,7 +49,6 @@ let onPlatform = false;
 let currLadder;
 let currRope;
 let totalCoins = 0;
-let objects;
 let letGo = false;
 let startGame = false;
 let splash;

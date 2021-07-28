@@ -15,16 +15,22 @@ if (localStorage.getItem(localStorageName) == null)
     highScore = 0;
  else 
     highScore = localStorage.getItem(localStorageName);
-  blocks = game.add.sprite(0, 0, 'blocks');
-   levelData = game.cache.getJSON('levelData');
+  
+  objects = game.add.sprite(0, 0, 'blocks');
+  blocks = game.add.group();
+  ladders = game.add.group();
+  gold = game.add.group();
+  
+  levelData = game.cache.getJSON('levelData');
    currLevel = levelData.levels['level-001'];
    game.stage.backgroundColor = '#000000';
    buildLevel(currLevel);
     player = game.add.image(400, 225, 'player');
     scaleToGame(player,.036,.036);
     player.anchor.setTo(0.5);
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-    game.cursors = game.input.keyboard.createCursorKeys();
+  
+  game.physics.startSystem(Phaser.Physics.ARCADE);
+  game.cursors = game.input.keyboard.createCursorKeys();
   player.playerMode = PLAYER_STATE.STILL;
   player.frame = 30;
   drawInfoText(
@@ -70,14 +76,24 @@ if (localStorage.getItem(localStorageName) == null)
         if (tile === '$') totalCoins++;
         const value = TILE_MAP[tile];
         if(value!=undefined){
-           sprite = game.add.sprite(blockX, blockY, 'blocks', value);
-            scaleToGame(sprite,.036,.036);
-            blockSizeX = sprite.width;
-            blockSizeY = sprite.height;
-            sprite.anchor.setTo(0.5);
-            if (DEBUG_MODE) drawRectangle(sprite.x-sprite.width/2,sprite.y-sprite.height/2,sprite.width,sprite.height,0xffffff);
-            gameObjects.push(sprite);
-          }
+          switch (tile) {
+            case '#':
+              sprite = game.add.sprite(blockX, blockY, 'objects', value);
+              scaleToGame(sprite,.036,.036);
+              blockSizeX = sprite.width;
+              blockSizeY = sprite.height;
+              sprite.anchor.setTo(0.5);
+              blocks.add(sprite);
+              break;
+          
+            default:
+              break;
+          } 
+          
+          
+          //   if (DEBUG_MODE) drawRectangle(sprite.x-sprite.width/2,sprite.y-sprite.height/2,sprite.width,sprite.height,0xffffff);
+          //   gameObjects.push(sprite);
+       }
       }
     }
   }
