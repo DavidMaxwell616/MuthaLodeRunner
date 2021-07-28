@@ -1,5 +1,5 @@
-const BASE_TILE_WIDTH = 21;
-const BASE_TILE_HEIGHT = 19;
+const BASE_TILE_WIDTH = 20;
+const BASE_TILE_HEIGHT = 20;
 const MAP_WIDTH = 56;
 const MAP_HEIGHT = 32;
 const TILE_MAP = {
@@ -13,7 +13,7 @@ const TILE_MAP = {
 '@' : 7, //block
 };
 const GAME_SCALE = 1.35;
-const DEBUG_MODE = true;
+const DEBUG_MODE = false;
 let graphics;
 let blockSizeX;
 let blockSizeY;
@@ -26,6 +26,7 @@ let levels;
 let onRope = false;
 let climbing = false;
 let running = false;
+let gameObjects = [];
 
 const COLOR_WHITE = 'rgb(255,255,255)';
 let onLadder = false;
@@ -48,9 +49,10 @@ let totalCoins = 0;
 let objects;
 let letGo = false;
 let startGame = false;
-let splash;var i=0;
+let splash;
+var i=0;
 let fireKey;
-const RUNNER_SPEED = 4;
+const PLAYER_SPEED = 5;
 const PLAYER_STATE = {
 'STILL':0,
 'RIGHT':1,

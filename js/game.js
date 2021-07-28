@@ -18,17 +18,19 @@ if (localStorage.getItem(localStorageName) == null)
   blocks = game.add.sprite(0, 0, 'blocks');
    levelData = game.cache.getJSON('levelData');
    currLevel = levelData.levels['level-001'];
+   game.stage.backgroundColor = '#000000';
    buildLevel(currLevel);
     player = game.add.image(400, 225, 'player');
     scaleToGame(player,.036,.036);
-    player.anchor.setTo(0);
-  game.cursors = game.input.keyboard.createCursorKeys();
+    player.anchor.setTo(0.5);
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.cursors = game.input.keyboard.createCursorKeys();
   player.playerMode = PLAYER_STATE.STILL;
   player.frame = 30;
   drawInfoText(
     `LEVEL: ${level}`,
     game.width/2,
-    220,
+    120,
     64,
     COLOR_WHITE,
     'IMPACT',
@@ -72,7 +74,9 @@ if (localStorage.getItem(localStorageName) == null)
             scaleToGame(sprite,.036,.036);
             blockSizeX = sprite.width;
             blockSizeY = sprite.height;
-            if (DEBUG_MODE) drawRectangle(sprite);
+            sprite.anchor.setTo(0.5);
+            if (DEBUG_MODE) drawRectangle(sprite.x-sprite.width/2,sprite.y-sprite.height/2,sprite.width,sprite.height,0xffffff);
+            gameObjects.push(sprite);
           }
       }
     }
@@ -113,18 +117,17 @@ function update() {
     mainMenuUpdate();
     return;
   }
-
-var playerBlockX = Math.floor(player.x/blockSizeX);
+  //drawRectangle(player.x-5,player.y-5,10,10,0xffffff);
+ 
+var playerBlockX = Math.floor(player.x/blockSizeX)+1;
 var playerBlockY = Math.floor(player.y/blockSizeY)+1;
 player.BlockOn = {y: playerBlockY,x: playerBlockX};
-player.BlockAbove = {y: playerBlockY-1,x: playerBlockX}; 
-player.BlockBelow = {y: playerBlockY+1,x: playerBlockX};
-player.BlockLeft = {y: playerBlockY,x: playerBlockX-1};
-player.BlockRight = {y: playerBlockY,x: playerBlockX+1};
-// var block = GetBlockValue(player.BlockOn);
+//var block = GetBlockValue(player.BlockOn);
+//console.log(block);
 // switch (block) {
 //   case 'H':
 //       player.playerMode = PLAYER_STATE.CLIMBING;
+//       player.frame = 11;
 //       break;
 //     case '':
 //       //player.playerMode = PLAYER_STATE.FALLING;
@@ -134,50 +137,71 @@ player.BlockRight = {y: playerBlockY,x: playerBlockX+1};
 //     break;
 // }
 
-block = GetBlockValue(player.BlockBelow);
-switch (block) {
-    case ' ':
-      player.playerMode = PLAYER_STATE.FALLING;
-      break;
-      case 'H':
-        player.playerMode = PLAYER_STATE.CLIMBING;
-        break;
-  default:
-    console.log(block);
-    break;
-}
+// block = GetBlockValue(player.BlockBelow);
+// switch (block) {
+//   case '#':
+//      if(player.playerMode==PLAYER_STATE.FALLING) 
+//        player.playerMode = PLAYER_STATE.STILL;
+//       break;
+//     case ' ':
+//       player.playerMode = PLAYER_STATE.FALLING;
+//       break;
+//       case 'H':
+//         player.playerMode = PLAYER_STATE.CLIMBING;
+//         break;
+//   default:
+//     console.log(block);
+//     break;
+// }
 
-if(player.playerMode!=PLAYER_STATE.STILL)
+if(player.playerMode==PLAYER_STATE.LEFT || player.playerMode==PLAYER_STATE.RIGHT)
   player.frame++;
+  //console.log(player.BlockOn.x,
+    //x,Math.abs(player.x+blockSizeX/2-player.BlockOn.x*blockSizeX+(blockSizeX/2)));
+ 
+  if(player.playerMode==PLAYER_STATE.FALLING)
+ player.y+=RUNNER_SPEED;
+ 
   if(player.playerMode!=PLAYER_STATE.FALLING){
-  if (game.cursors.left.isDown && player.x>0) {
+  if (game.cursors.left.isDown && player.x>player.width/2) {
 if(player.playerMode == PLAYER_STATE.STILL && player.playerMode!=PLAYER_STATE.FALLING)
-player.x-=15;
+player.x-=PLAYER_SPEED;
     player.playerMode = PLAYER_STATE.LEFT;
-    playerRun(-RUNNER_SPEED);
+    playerRun(-PLAYER_SPEED);
   }
-  if (game.cursors.right.isDown && player.x<game.width) {
+
+  if (game.cursors.right.isDown && player.x<game.width-100) {
     if(player.playerMode == PLAYER_STATE.STILL){
-    player.x+=RUNNER_SPEED;
+    player.x+=PLAYER_SPEED;
        player.playerMode = PLAYER_STATE.RIGHT;}
-    playerRun(RUNNER_SPEED);
+    playerRun(PLAYER_SPEED);
   }
+  
   if(game.cursors.right.isUp && game.cursors.left.isUp)
   {
     player.playerMode = PLAYER_STATE.STILL;
     player.frame = 30;
+    if(playerOnRope())
+    {
+    player.frame = 11;
+    player.playerMode = PLAYER_STATE.CLIMBING;
+  }
   }
 }
 updateStats();
+}
+
+function playerOnRope(){
+  return GetBlockValue(player.BlockOn)=="H";
 }
 
 function GetBlockValue(block){
 return(currLevel[block.y][block.x]);
 }
 
-function drawRectangle(sprite){
-  graphics.lineStyle(1, 0xff);
-  graphics.drawRect(sprite.x,sprite.y,Math.abs(sprite.width),Math.abs(sprite.height));
+function drawRectangle(x,y,w,h,color){
+  graphics.lineStyle(1, color);
+  graphics.drawRect(x,y,Math.abs(w),Math.abs(h));
 }
 
 

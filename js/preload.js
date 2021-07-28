@@ -7,7 +7,7 @@ function preload() {
   });
   game.load.path = '../assets/images/';
   game.load.spritesheet('player', 'player.png', 20,20);
-  game.load.spritesheet('blocks', 'blocks.png', 21,19);
+  game.load.spritesheet('blocks', 'blocks.png', 20,20);
   game.load.image('splash', 'splash.png');
   game.load.image('maxxdaddy', 'maxxdaddy.gif');
   
