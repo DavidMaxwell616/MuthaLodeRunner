@@ -10,26 +10,31 @@ function create() {
 }
 
 function gameCreate() {
+  game.physics.startSystem(Phaser.Physics.ARCADE);
   graphics = game.add.graphics(0, 0);
 if (localStorage.getItem(localStorageName) == null)
     highScore = 0;
  else 
     highScore = localStorage.getItem(localStorageName);
   
-  objects = game.add.sprite(0, 0, 'blocks');
+  objects = game.add.sprite(0, 0, 'objects');
   blocks = game.add.group();
   ladders = game.add.group();
+  xladders = game.add.group();
   gold = game.add.group();
-  
+  solids = game.add.group();
+  enemies = game.add.group();
+  rope = game.add.group();
   levelData = game.cache.getJSON('levelData');
-   currLevel = levelData.levels['level-001'];
+  currLevel = levelData.levels['level-001'];
    game.stage.backgroundColor = '#000000';
-   buildLevel(currLevel);
-    player = game.add.image(400, 225, 'player');
+   player = game.add.image(0,0, 'player');
     scaleToGame(player,.036,.036);
     player.anchor.setTo(0.5);
-  
-  game.physics.startSystem(Phaser.Physics.ARCADE);
+   buildLevel(currLevel);
+     game.physics.arcade.enable(player);
+     player.dead = false;
+
   game.cursors = game.input.keyboard.createCursorKeys();
   player.playerMode = PLAYER_STATE.STILL;
   player.frame = 30;
@@ -74,18 +79,40 @@ if (localStorage.getItem(localStorageName) == null)
         const blockY = BASE_TILE_HEIGHT * y * GAME_SCALE;
         let sprite;
         if (tile === '$') totalCoins++;
-        const value = TILE_MAP[tile];
-        if(value!=undefined){
+        const value = OBJECT_MAP[tile];
+          sprite = game.add.sprite(blockX, blockY, 'objects', value);
+          scaleToGame(sprite,.036,.036);
+          blockSizeX = sprite.width;
+          blockSizeY = sprite.height;
+          sprite.anchor.setTo(0.5);
           switch (tile) {
             case '#':
-              sprite = game.add.sprite(blockX, blockY, 'objects', value);
-              scaleToGame(sprite,.036,.036);
-              blockSizeX = sprite.width;
-              blockSizeY = sprite.height;
-              sprite.anchor.setTo(0.5);
-              blocks.add(sprite);
+               blocks.add(sprite);
               break;
-          
+            case 'H':
+              ladders.add(sprite);
+              break;
+            case 'S':
+                sprite.visible = false;
+                xladders.add(sprite);
+                break;
+              case '$':
+                gold.add(sprite);
+              break;
+              case '@':
+                solids.add(sprite);
+              break;
+              case '-':
+                rope.add(sprite);
+              break;
+              case '&':
+                player.x = blockX;
+                player.y = blockY;
+                break;
+              case '0':
+                createEnemy(blockX,blockY);  
+              break;
+             
             default:
               break;
           } 
@@ -93,11 +120,18 @@ if (localStorage.getItem(localStorageName) == null)
           
           //   if (DEBUG_MODE) drawRectangle(sprite.x-sprite.width/2,sprite.y-sprite.height/2,sprite.width,sprite.height,0xffffff);
           //   gameObjects.push(sprite);
-       }
       }
     }
   }
 
+  function createEnemy(x,y){
+    sprite = game.add.sprite(x,y, 'enemy');
+    scaleToGame(sprite,.036,.036);
+    blockSizeX = sprite.width;
+    blockSizeY = sprite.height;
+    sprite.anchor.setTo(0.5);
+sprite.frame = 5;
+  }
   function drawStats(){
   levelText = drawInfoText(
     `LEVEL: ${level}`,

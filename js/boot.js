@@ -2,14 +2,14 @@ const BASE_TILE_WIDTH = 20;
 const BASE_TILE_HEIGHT = 20;
 const MAP_WIDTH = 56;
 const MAP_HEIGHT = 32;
-const TILE_MAP = {
+const OBJECT_MAP = {
 ' ': 0, //air
 '#': 1, //brick
 '$' : 2, //coin
 '0' : 3, //guard
 '-' : 4, //rope
 'H' : 5, //ladder
-'S' : 6, //hLadder
+'S' : 6, //xLadder
 '@' : 7, //block
 };
 const GAME_SCALE = 1.35;
@@ -23,9 +23,12 @@ let player;
 let guards;
 let objects;
 let ladders;
+let xladders;
 let gold;
 let blocks;
 let levels;
+let solids;
+let rope;
 let onRope = false;
 let climbing = false;
 let running = false;
@@ -33,7 +36,7 @@ let gameObjects = [];
 
 const COLOR_WHITE = 'rgb(255,255,255)';
 let onLadder = false;
-let onHLadder = false;
+let onXLadder = false;
 let score = 0;
 let scoreText;
 let lives = 3;
