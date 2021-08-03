@@ -1,11 +1,11 @@
 // game objects
 var player,
-baddie,
+enemy,
 platforms,
 ladders,
 cursors,
 coins,
-//new variable to store whether or not hero is currently on a ladder
+//new variable to store whether or not player is currently on a ladder
 onLadder = false;
 
 var score = 0,
@@ -58,7 +58,7 @@ function create() {
     ladder.body.immovable = true;
  
     //the player and its settings
-    player = game.add.sprite(32, game.world.height - 150, 'hero');
+    player = game.add.sprite(32, game.world.height - 150, 'player');
 
     //we need to enable physics on the player
     game.physics.arcade.enable(player);
@@ -70,26 +70,26 @@ function create() {
     //confine our player to the world bounds so he can't fall out of the frame
     player.body.collideWorldBounds = true;
     
-    //set a flag for when player gets hit by baddie
+    //set a flag for when player gets hit by enemy
     player.dead = false;
     //change rotation point so we can make player spin when hit.
     player.anchor.setTo(.5, .5);
     //add our baddy 
-    baddie = game.add.sprite(320, game.world.height - 100, 'baddie');
+    enemy = game.add.sprite(320, game.world.height - 100, 'enemy');
 
-    //enable physics on the baddie
-    game.physics.arcade.enable(baddie);
+    //enable physics on the enemy
+    game.physics.arcade.enable(enemy);
 
     //set physics properties. Give the little guy a slight bounce.
-    baddie.body.bounce.y = 0.2;
-    baddie.body.gravity.y = gravity;
+    enemy.body.bounce.y = 0.2;
+    enemy.body.gravity.y = gravity;
 
-    //confine our baddie to the world bounds so he can't fall out of the frame
-    baddie.body.collideWorldBounds = true;
-    baddie.body.velocity.x = -100;
-    baddie.maxDistance = 200;
-    baddie.previousX = baddie.x;
-    baddie.anchor.setTo(.5, .5);
+    //confine our enemy to the world bounds so he can't fall out of the frame
+    enemy.body.collideWorldBounds = true;
+    enemy.body.velocity.x = -100;
+    enemy.maxDistance = 200;
+    enemy.previousX = enemy.x;
+    enemy.anchor.setTo(.5, .5);
     //finally some coins to collect. We start by adding a group...
     coins = game.add.group();
 
@@ -134,16 +134,16 @@ function update() {
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(coins, platforms);
 
-    //collide baddie with platforms and player
-    game.physics.arcade.collide(baddie, platforms);
+    //collide enemy with platforms and player
+    game.physics.arcade.collide(enemy, platforms);
     
-    //check how far baddie has travelled. If past maximum amount then switch direction
-    if (Math.abs(baddie.x - baddie.previousX) >= baddie.maxDistance) {
-        switchDirection(baddie);
+    //check how far enemy has travelled. If past maximum amount then switch direction
+    if (Math.abs(enemy.x - enemy.previousX) >= enemy.maxDistance) {
+        switchDirection(enemy);
     }
   
-    //we user overlap here instead of collide so baddie doesn't move
-    game.physics.arcade.overlap(player, baddie, hitBaddie);
+    //we user overlap here instead of collide so enemy doesn't move
+    game.physics.arcade.overlap(player, enemy, hitenemy);
   
     //check if player is on ladder
     game.physics.arcade.overlap(player, ladders, isOnLadder);
@@ -230,7 +230,7 @@ function update() {
     }
 }
 
-//called from the main game loop whenever a hero collects a coin
+//called from the main game loop whenever a player collects a coin
 function collectcoin (player, coin) {
    //check if we have already hit coin, and player is not dead
    if(!coin.hit && !player.dead)
@@ -255,34 +255,34 @@ function collectcoin (player, coin) {
    }
 }
 
-function hitBaddie(player, baddie) {
-    //if baddie is hit on head and hasn't already been hit
-    if (baddie.body.touching.up && !baddie.hit) 
+function hitenemy(player, enemy) {
+    //if enemy is hit on head and hasn't already been hit
+    if (enemy.body.touching.up && !enemy.hit) 
     {
-        // set baddie as being hit and remove physics
-        baddie.hit = true;
-        baddie.body.velocity.y = -100;
-        baddie.body.velocity.x = 0;
+        // set enemy as being hit and remove physics
+        enemy.hit = true;
+        enemy.body.velocity.y = -100;
+        enemy.body.velocity.x = 0;
 
         //make our player bounce
         player.body.velocity.y = -gravity;
       
         //create empty tweens
-        var baddieTween = game.add.tween(baddie),
-        baddieScaleTween = game.add.tween(baddie.scale);
+        var enemyTween = game.add.tween(enemy),
+        enemyScaleTween = game.add.tween(enemy.scale);
 
         //assign tween values
-        baddieTween.to({ alpha: 0, angle: 360}, 1000, Phaser.Easing.Linear.None);
-        baddieScaleTween.to({ x: .5, y:.5 }, 1000, Phaser.Easing.Linear.None);
+        enemyTween.to({ alpha: 0, angle: 360}, 1000, Phaser.Easing.Linear.None);
+        enemyScaleTween.to({ x: .5, y:.5 }, 1000, Phaser.Easing.Linear.None);
 
         //when tween is finished, remove sprite
-        baddieTween.onComplete.add(removeSprite);
+        enemyTween.onComplete.add(removeSprite);
       
         //start the tweens
-        baddieScaleTween.start();
-        baddieTween.start();
+        enemyScaleTween.start();
+        enemyTween.start();
     }
-    //otherwise you've hit baddie, but not on the head. This makes you die
+    //otherwise you've hit enemy, but not on the head. This makes you die
     else
     {
         //set player to dead
@@ -313,15 +313,15 @@ function removeSprite(sprite) {
     sprite.kill();
 }
 
-function switchDirection(baddie)
+function switchDirection(enemy)
 {
-   //reverse velocity so baddie moves are same speed but in opposite direction
-   baddie.body.velocity.x *= -1;
+   //reverse velocity so enemy moves are same speed but in opposite direction
+   enemy.body.velocity.x *= -1;
    //reset count
-   baddie.previousX = baddie.x;
+   enemy.previousX = enemy.x;
 }
 
-//when hero and ladder are touching, this is called
+//when player and ladder are touching, this is called
 function isOnLadder()
 {
   onLadder = true;

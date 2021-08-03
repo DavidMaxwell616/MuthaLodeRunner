@@ -27,13 +27,18 @@ if (localStorage.getItem(localStorageName) == null)
   rope = game.add.group();
   levelData = game.cache.getJSON('levelData');
   currLevel = levelData.levels['level-001'];
-   game.stage.backgroundColor = '#000000';
+ //  game.stage.backgroundColor = '#000000';
    player = game.add.image(0,0, 'player');
-    scaleToGame(player,.036,.036);
-    player.anchor.setTo(0.5);
-   buildLevel(currLevel);
-     game.physics.arcade.enable(player);
-     player.dead = false;
+  scaleToGame(player,.036,.036);
+  player.anchor.setTo(0.5);
+  buildLevel(currLevel);
+  game.physics.arcade.enable(player);
+  console.log(player.body);
+  player.body.bounce.y = 0.2;
+  player.body.gravity.y = gravity;
+  player.dead = false;
+  gold.enableBody = true;
+  objects.enableBody = true;
 
   game.cursors = game.input.keyboard.createCursorKeys();
   player.playerMode = PLAYER_STATE.STILL;
@@ -80,9 +85,11 @@ if (localStorage.getItem(localStorageName) == null)
         let sprite;
         if (tile === '$') totalCoins++;
         const value = OBJECT_MAP[tile];
+        if(tile!=' '){
           sprite = game.add.sprite(blockX, blockY, 'objects', value);
           scaleToGame(sprite,.036,.036);
-          blockSizeX = sprite.width;
+          blockSizeX = sprite.width; 
+          
           blockSizeY = sprite.height;
           sprite.anchor.setTo(0.5);
           switch (tile) {
@@ -116,7 +123,7 @@ if (localStorage.getItem(localStorageName) == null)
             default:
               break;
           } 
-          
+        }
           
           //   if (DEBUG_MODE) drawRectangle(sprite.x-sprite.width/2,sprite.y-sprite.height/2,sprite.width,sprite.height,0xffffff);
           //   gameObjects.push(sprite);

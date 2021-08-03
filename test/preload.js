@@ -5,7 +5,7 @@ function preload() {
     
     game.load.image('ground', assetRoot + 'assets/platform.png');
     game.load.image('coin', assetRoot + 'assets/coin.png');
-    game.load.image('hero', assetRoot + 'assets/hero.png');
-    game.load.image('baddie', assetRoot + 'assets/baddie.png');
+    game.load.image('player', assetRoot + 'assets/hero.png');
+    game.load.image('enemy', assetRoot + 'assets/baddie.png');
     game.load.image('ladder', assetRoot + 'assets/ladder.png');
   }
