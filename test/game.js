@@ -12,8 +12,7 @@ var score = 0,
 scoreText;
 
 var playerSpeed = 250, 
-gravity = 500,
-assetRoot = "https://tomoliverharrison.co.uk/phaser/";
+gravity = 500
 
 //create our game object... remember it's
 //width, height, rendering context (canvas, webgl or auto), DOM ID, object of essential phaser functions
