@@ -22,14 +22,13 @@ if (localStorage.getItem(localStorageName) == null)
   blocks = game.add.group();
   ladders = game.add.group();
   xladders = game.add.group();
-  gold = game.add.group();
-  gold.enableBody = true;
+  lode = game.add.group();
+  lode.enableBody = true;
   solids = game.add.group();
   enemies = game.add.group();
   rope = game.add.group();
   levelData = game.cache.getJSON('levelData');
   currLevel = levelData.levels['level-001'];
-  //  game.stage.backgroundColor = '#000000';
   player = game.add.sprite(0,0, 'player');
   scaleToGame(player,.036,.036);
   player.anchor.setTo(0.5);
@@ -79,7 +78,7 @@ if (localStorage.getItem(localStorageName) == null)
      for (let y = 0; y < levelMap.length; y++) {
       for (let x = 0; x < levelMap[y].length; x++) {
          const tile = levelMap[y][x];
-        const blockX = BASE_TILE_WIDTH * x*GAME_SCALE;
+        const blockX = BASE_TILE_WIDTH * x*GAME_SCALE+20;
         const blockY = BASE_TILE_HEIGHT * y * GAME_SCALE;
         let sprite;
         if (tile === '$') totalCoins++;
@@ -88,7 +87,6 @@ if (localStorage.getItem(localStorageName) == null)
           sprite = game.add.sprite(blockX, blockY, 'objects', value);
           scaleToGame(sprite,.036,.036);
           blockSizeX = sprite.width; 
-          
           blockSizeY = sprite.height;
           sprite.anchor.setTo(0.5);
           game.physics.arcade.enable(sprite);
@@ -108,7 +106,7 @@ if (localStorage.getItem(localStorageName) == null)
               break;
             case '$':
               sprite.body.immovable = true;
-              gold.add(sprite);
+              lode.add(sprite);
               break;
             case '@':
                 solids.add(sprite);
@@ -181,59 +179,29 @@ function update() {
     return;
   }
   //drawRectangle(player.x-5,player.y-5,10,10,0xffffff);
- 
-var playerBlockX = Math.floor(player.x/blockSizeX)+1;
-var playerBlockY = Math.floor(player.y/blockSizeY)+1;
-player.BlockOn = {y: playerBlockY,x: playerBlockX};
-//var block = GetBlockValue(player.BlockOn);
-//console.log(block);
-// switch (block) {
-//   case 'H':
-//       player.playerMode = PLAYER_STATE.CLIMBING;
-//       player.frame = 11;
-//       break;
-//     case '':
-//       //player.playerMode = PLAYER_STATE.FALLING;
-//       break;
-  
-//   default:
-//     break;
-// }
-
-// block = GetBlockValue(player.BlockBelow);
-// switch (block) {
-//   case '#':
-//      if(player.playerMode==PLAYER_STATE.FALLING) 
-//        player.playerMode = PLAYER_STATE.STILL;
-//       break;
-//     case ' ':
-//       player.playerMode = PLAYER_STATE.FALLING;
-//       break;
-//       case 'H':
-//         player.playerMode = PLAYER_STATE.CLIMBING;
-//         break;
-//   default:
-//     console.log(block);
-//     break;
-// }
+  game.physics.arcade.collide(player, blocks);
+  game.physics.arcade.collide(lode, blocks);
+  game.physics.arcade.overlap(player, ladders, isOnLadder);
+  game.physics.arcade.collide(enemies, blocks);
+  game.physics.arcade.overlap(player, lode, CollectGold, null, this);
 
 if(player.playerMode==PLAYER_STATE.LEFT || player.playerMode==PLAYER_STATE.RIGHT)
   player.frame++;
   //console.log(player.BlockOn.x,
     //x,Math.abs(player.x+blockSizeX/2-player.BlockOn.x*blockSizeX+(blockSizeX/2)));
  
-  if(player.playerMode==PLAYER_STATE.FALLING)
-    player.y+=RUNNER_SPEED;
+  // if(player.playerMode==PLAYER_STATE.FALLING)
+  //   player.y+=RUNNER_SPEED;
  
   if(player.playerMode!=PLAYER_STATE.FALLING){
   if (game.cursors.left.isDown && player.x>player.width/2) {
-if(player.playerMode == PLAYER_STATE.STILL && player.playerMode!=PLAYER_STATE.FALLING)
-player.x-=PLAYER_SPEED;
+  if(player.playerMode == PLAYER_STATE.STILL)
+    player.x-=PLAYER_SPEED;
     player.playerMode = PLAYER_STATE.LEFT;
     playerRun(-PLAYER_SPEED);
   }
 
-  if (game.cursors.right.isDown && player.x<game.width-100) {
+  if (game.cursors.right.isDown && player.x<game.width-20) {
     if(player.playerMode == PLAYER_STATE.STILL){
     player.x+=PLAYER_SPEED;
        player.playerMode = PLAYER_STATE.RIGHT;}
@@ -280,4 +248,19 @@ function playerRun(direction){
   player.frame = player.frame<11?player.frame++:player.frame=1;
   player.width = blockSizeX * scale ;
   player.x+=direction;
+}
+
+function removeSprite(sprite) {
+  sprite.kill();
+}
+
+function isOnLadder(sprite)
+{
+  sprite.onLadder = true;
+}
+
+function CollectGold (player, gold) {
+
+  score += 50;
+  removeSprite(gold);
 }

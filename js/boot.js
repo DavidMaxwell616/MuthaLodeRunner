@@ -24,7 +24,7 @@ let guards;
 let objects;
 let ladders;
 let xladders;
-let gold;
+let lode;
 let blocks;
 let levels;
 let solids;
