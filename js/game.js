@@ -11,6 +11,7 @@ function create() {
 
 function gameCreate() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
+  game.physics.arcade.gravity.y = 500;
   graphics = game.add.graphics(0, 0);
 if (localStorage.getItem(localStorageName) == null)
     highScore = 0;
@@ -35,9 +36,11 @@ if (localStorage.getItem(localStorageName) == null)
   buildLevel(currLevel);
   game.physics.arcade.enable(player);
   player.body.bounce.y = 0.2;
-  player.body.gravity.y = gravity;
   player.dead = false;
-  
+  player.onLadder = false;
+  player.onRope = false;
+  console.log(player.body.gravity.y);
+
   game.cursors = game.input.keyboard.createCursorKeys();
   player.playerMode = PLAYER_STATE.STILL;
   player.frame = 30;
@@ -92,26 +95,33 @@ if (localStorage.getItem(localStorageName) == null)
           game.physics.arcade.enable(sprite);
           switch (tile) {
             case '#':
+              sprite.body.allowGravity = false;
               sprite.body.immovable = true;
               blocks.add(sprite);
               break;
             case 'H':
+              sprite.body.allowGravity = false;
               sprite.body.immovable = true;
               ladders.add(sprite);
               break;
             case 'S':
+              sprite.body.allowGravity = false;
               sprite.body.immovable = true;
               sprite.visible = false;
               xladders.add(sprite);
               break;
             case '$':
+              sprite.body.allowGravity = false;
               sprite.body.immovable = true;
               lode.add(sprite);
               break;
             case '@':
-                solids.add(sprite);
+              sprite.body.allowGravity = false;
+              sprite.body.immovable = true;
+                 solids.add(sprite);
               break;
               case '-':
+                sprite.body.allowGravity = false;
                 sprite.body.immovable = true;
                 rope.add(sprite);
               break;
@@ -142,7 +152,10 @@ if (localStorage.getItem(localStorageName) == null)
     sprite.anchor.setTo(0.5);
     game.physics.arcade.enable(sprite);
     sprite.frame = 5;
-  }
+    sprite.body.allowGravity = false;
+    sprite.body.immovable = true;
+}
+
   function drawStats(){
   levelText = drawInfoText(
     `LEVEL: ${level}`,
@@ -179,20 +192,44 @@ function update() {
     return;
   }
   //drawRectangle(player.x-5,player.y-5,10,10,0xffffff);
+  player.onLadder = false;
   game.physics.arcade.collide(player, blocks);
   game.physics.arcade.collide(lode, blocks);
   game.physics.arcade.overlap(player, ladders, isOnLadder);
+  game.physics.arcade.overlap(player, rope, isOnRope);
   game.physics.arcade.collide(enemies, blocks);
   game.physics.arcade.overlap(player, lode, CollectGold, null, this);
 
+
+  if(player.onRope)
+{
+  if(player.frame<21) player.frame = 21;
+  //player.body.gravity=0;
+  if(player.frame<30) player.frame++; else player.frame = 21;
+}
+
+if(player.onLadder)
+{
+  player.body.gravity=0;
+  if(player.playerMode==PLAYER_STATE.CLIMBING)
+    if(player.frame<20) player.frame++; else player.frame = 11;
+  if (game.cursors.up.isDown && player.y>0) {
+    player.playerMode=PLAYER_STATE.CLIMBING
+    player.y--;
+   }
+  if(game.cursors.up.isUp && game.cursors.down.isUp && player.onLadder)
+  {
+    player.playerMode = PLAYER_STATE.STILL;
+  }
+
+}
+else
+{
+}
+
 if(player.playerMode==PLAYER_STATE.LEFT || player.playerMode==PLAYER_STATE.RIGHT)
   player.frame++;
-  //console.log(player.BlockOn.x,
-    //x,Math.abs(player.x+blockSizeX/2-player.BlockOn.x*blockSizeX+(blockSizeX/2)));
- 
-  // if(player.playerMode==PLAYER_STATE.FALLING)
-  //   player.y+=RUNNER_SPEED;
- 
+  
   if(player.playerMode!=PLAYER_STATE.FALLING){
   if (game.cursors.left.isDown && player.x>player.width/2) {
   if(player.playerMode == PLAYER_STATE.STILL)
@@ -208,27 +245,14 @@ if(player.playerMode==PLAYER_STATE.LEFT || player.playerMode==PLAYER_STATE.RIGHT
     playerRun(PLAYER_SPEED);
   }
   
-  if(game.cursors.right.isUp && game.cursors.left.isUp)
+  if(game.cursors.right.isUp && game.cursors.left.isUp && !player.onLadder)
   {
     player.playerMode = PLAYER_STATE.STILL;
     player.frame = 30;
-  //   if(playerOnRope())
-  //   {
-  //   player.frame = 11;
-  //   player.playerMode = PLAYER_STATE.CLIMBING;
-  // }
   }
+  updateStats();
 }
-updateStats();
 }
-
-// function playerOnRope(){
-//   return GetBlockValue(player.BlockOn)=="H";
-// }
-
-// function GetBlockValue(block){
-// return(currLevel[block.y][block.x]);
-// }
 
 function drawRectangle(x,y,w,h,color){
   graphics.lineStyle(1, color);
@@ -242,6 +266,11 @@ function updateStats(){
   scoreText.setText('SCORE: ' + score);
 }
 
+function playerClimb(direction){
+  player.frame = player.frame<20?player.frame++:player.frame=11;
+  player.y+=direction;
+}
+
 function playerRun(direction){
   var scale = direction<0?1:-1;
   player.scale.x=scale;
@@ -250,17 +279,21 @@ function playerRun(direction){
   player.x+=direction;
 }
 
-function removeSprite(sprite) {
-  sprite.kill();
-}
-
-function isOnLadder(sprite)
+function isOnLadder(sprite, ladder)
 {
-  sprite.onLadder = true;
+  sprite.onLadder = Math.abs(ladder.x-sprite.x)<8;
 }
-
+function isOnRope(sprite, rope)
+{
+  sprite.onRope = true;
+}
 function CollectGold (player, gold) {
 
   score += 50;
-  removeSprite(gold);
+  gold.destroy();
+  lode.remove(gold);
+  if(lode.children.length==0)
+  xladders.forEach(ladder => {
+    ladder.visible = true;    
+  });
 }
