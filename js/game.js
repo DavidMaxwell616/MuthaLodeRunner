@@ -39,8 +39,7 @@ if (localStorage.getItem(localStorageName) == null)
   player.dead = false;
   player.onLadder = false;
   player.onRope = false;
-  console.log(player.body.gravity.y);
-
+ 
   game.cursors = game.input.keyboard.createCursorKeys();
   player.playerMode = PLAYER_STATE.STILL;
   player.frame = 30;
@@ -153,7 +152,7 @@ if (localStorage.getItem(localStorageName) == null)
     game.physics.arcade.enable(sprite);
     sprite.frame = 5;
     sprite.body.allowGravity = false;
-    sprite.body.immovable = true;
+    //sprite.body.immovable = true;
 }
 
   function drawStats(){
@@ -204,13 +203,12 @@ function update() {
   if(player.onRope)
 {
   if(player.frame<21) player.frame = 21;
-  //player.body.gravity=0;
   if(player.frame<30) player.frame++; else player.frame = 21;
 }
-
+console.log(player.onLadder);
 if(player.onLadder)
 {
-  player.body.gravity=0;
+  player.body.allowGravity = false;
   if(player.playerMode==PLAYER_STATE.CLIMBING)
     if(player.frame<20) player.frame++; else player.frame = 11;
   if (game.cursors.up.isDown && player.y>0) {
@@ -225,6 +223,7 @@ if(player.onLadder)
 }
 else
 {
+  player.body.allowGravity = true;
 }
 
 if(player.playerMode==PLAYER_STATE.LEFT || player.playerMode==PLAYER_STATE.RIGHT)

@@ -54,7 +54,8 @@ let startGame = false;
 let splash;
 var i=0;
 let fireKey;
-const PLAYER_SPEED = 5;
+const ENEMY_SPEED = 1;
+const PLAYER_SPEED = 3;
 const PLAYER_STATE = {
 'STILL':0,
 'RIGHT':1,
