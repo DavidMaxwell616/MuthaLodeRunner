@@ -1,24 +1,18 @@
+var game = new Phaser.Game(884, 560, Phaser.AUTO, 'game', 
+{ preload: preload, create: create, update: update });
+
 var player,
 enemy,
 platforms,
 ladders,
 cursors,
 lode;
-
 var onLadder = false,
 onRope = false;
-
 var score = 0,
 scoreText;
-
 var playerSpeed = 250, 
-gravity = 500
-
-//create our game object... remember it's
-//width, height, rendering context (canvas, webgl or auto), DOM ID, object of essential phaser functions
-var game = new Phaser.Game(884, 560, Phaser.AUTO, 'game', 
-{ preload: preload, create: create, update: update });
-
+gravity = 500;
 var levelData;
 var currLevel;
 var blocks;
@@ -29,7 +23,7 @@ var lode;
 var ropes;
 var enemies;
 var goldCount = 0;
-var levelNumber =1;
+var level =1;
 var hiscoreText;
 var hiscore = 0;
 var onGround = false;
@@ -37,7 +31,8 @@ var climbing = false;
 
 function create() {
     levelData = game.cache.getJSON('levelData');
-    currLevel = levelData.levels['level-00'+levelNumber];
+    var lvl = String(level).padStart(3, '0');
+    currLevel = levelData.levels['level-'+lvl];
     game.stage.backgroundColor = "#243166";
     score = 0;
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -60,12 +55,15 @@ function create() {
     player.dead = false;
     player.anchor.setTo(.5, .5);
 
-    levelText = game.add.text(game.world.width*.45, game.world.height-35, 'LEVEL: '+levelNumber, { fontSize: '18px', fill: '#eee' });
+    levelText = game.add.text(game.world.width*.45, game.world.height-35, 'LEVEL: '+level, { fontSize: '18px', fill: '#eee' });
     hiscoreText = game.add.text(game.world.width*.8, game.world.height-35, 'HIGH SCORE: '+hiscore, { fontSize: '18px', fill: '#eee' });
     scoreText = game.add.text(16, game.world.height-35, 'SCORE: '+score, { fontSize: '18px', fill: '#eee' });
     cursors = game.input.keyboard.createCursorKeys();
 }
 
+function destroyLevel(){
+
+}
 function buildLevel(levelMap)
 {
     for (let y = 0; y < levelMap.length; y++) {
@@ -137,6 +135,7 @@ function update() {enemies
     onGround = false;
     player.body.gravity.y = gravity;
     game.physics.arcade.collide(player, blocks);
+    game.physics.arcade.collide(player, solids);
     game.physics.arcade.collide(lode, blocks);
     game.physics.arcade.collide(enemies, blocks);
 
@@ -144,11 +143,24 @@ function update() {enemies
     game.physics.arcade.overlap(player, solids,x=>{onGround=true});
     game.physics.arcade.overlap(player, enemies, hitenemy);
     game.physics.arcade.overlap(player, ladders, isOnLadder);
+    game.physics.arcade.overlap(player, xladders, isOnLadder);
     game.physics.arcade.overlap(player, ropes, x=>{onRope=true});
     game.physics.arcade.overlap(player, lode, collectGold, null, this);
+    
     player.body.velocity.x = 0;
 
-    if(!player.dead)
+    if(goldCount ==0)
+        xladders.forEach(ladder => {
+        ladder.visible = true;       
+    });
+
+if(onLadder && player.y-player.height/2==0){
+    var lvl = String(level).padStart(3, '0');
+    currLevel = levelData.levels['level-'+lvl];
+    buildLevel(currLevel);
+}
+ 
+if(!player.dead)
     {
         if (cursors.left.isDown && !onGround)
         {
@@ -181,6 +193,7 @@ function update() {enemies
             }
             if(cursors.down.isDown)
             {
+                climbing = true;
                 player.body.velocity.y = playerSpeed/2;
             }
             if((!cursors.up.isDown && !cursors.down.isDown) && !game.input.pointer1.isDown)
