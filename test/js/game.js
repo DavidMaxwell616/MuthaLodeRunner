@@ -62,8 +62,26 @@ function create() {
 }
 
 function destroyLevel(){
-
+    blocks.forEach(sprite => {
+        removeSprite(sprite);
+    });
+    solids.forEach(sprite => {
+        removeSprite(sprite);
+    });
+    ladders.forEach(sprite => {
+        removeSprite(sprite);
+    });
+    xladders.forEach(sprite => {
+        removeSprite(sprite);
+    });
+    ropes.forEach(sprite => {
+        removeSprite(sprite);
+    });
+    enemies.forEach(sprite => {
+        removeSprite(sprite);
+    });
 }
+
 function buildLevel(levelMap)
 {
     for (let y = 0; y < levelMap.length; y++) {
@@ -155,6 +173,8 @@ function update() {enemies
     });
 
 if(onLadder && player.y-player.height/2==0){
+    destroyLevel();
+    level++
     var lvl = String(level).padStart(3, '0');
     currLevel = levelData.levels['level-'+lvl];
     buildLevel(currLevel);
