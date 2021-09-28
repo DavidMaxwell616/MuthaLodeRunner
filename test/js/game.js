@@ -16,7 +16,7 @@ gravity = 500
 
 //create our game object... remember it's
 //width, height, rendering context (canvas, webgl or auto), DOM ID, object of essential phaser functions
-var game = new Phaser.Game(800, 560, Phaser.AUTO, 'game', 
+var game = new Phaser.Game(884, 560, Phaser.AUTO, 'game', 
 { preload: preload, create: create, update: update });
 
 var levelData;
@@ -32,6 +32,8 @@ var goldCount = 0;
 var levelNumber =1;
 var hiscoreText;
 var hiscore = 0;
+var onGround = false;
+var climbing = false;
 
 function create() {
     levelData = game.cache.getJSON('levelData');
@@ -110,6 +112,7 @@ function createEnemy(x,y){
     var sprite = game.add.sprite(x,y, 'enemy');
     game.physics.arcade.enable(sprite);
     sprite.body.allowGravity = true;
+    sprite.anchor.setTo(.5, .5);
     return sprite;
 }
 
@@ -119,6 +122,7 @@ function makeSprite(x,y,type,visible)
     game.physics.arcade.enable(sprite);
     sprite.body.allowGravity = false;
     sprite.body.immovable = true;
+    sprite.anchor.setTo(.5, .5);
     sprite.visible = visible;
     return sprite;
 }
@@ -130,25 +134,30 @@ function isOnLadder()
 function update() {enemies
     onLadder = false;
     onRope = false;
+    onGround = false;
     player.body.gravity.y = gravity;
     game.physics.arcade.collide(player, blocks);
     game.physics.arcade.collide(lode, blocks);
     game.physics.arcade.collide(enemies, blocks);
 
-    game.physics.arcade.overlap(player, enemy, hitenemy);
-    game.physics.arcade.overlap(player, ladders, a=>{onLadder=true});
-    game.physics.arcade.overlap(player, ropes, a=>{onRope=true});
+    game.physics.arcade.overlap(player, blocks,x=>{onGround=true});
+    game.physics.arcade.overlap(player, solids,x=>{onGround=true});
+    game.physics.arcade.overlap(player, enemies, hitenemy);
+    game.physics.arcade.overlap(player, ladders, isOnLadder);
+    game.physics.arcade.overlap(player, ropes, x=>{onRope=true});
     game.physics.arcade.overlap(player, lode, collectGold, null, this);
     player.body.velocity.x = 0;
 
     if(!player.dead)
     {
-        if (cursors.left.isDown)
+        if (cursors.left.isDown && !onGround)
         {
+            climbing = false;
             player.body.velocity.x = -playerSpeed;
         }
-        else if (cursors.right.isDown)
+        else if (cursors.right.isDown && !onGround)
         {
+            climbing = false;
             player.body.velocity.x = playerSpeed;
         }
 
@@ -166,6 +175,8 @@ function update() {enemies
             player.body.velocity.y = 0;
             if(cursors.up.isDown)
             {
+
+                climbing = true;
                 player.body.velocity.y = -playerSpeed/2;
             }
             if(cursors.down.isDown)
@@ -198,15 +209,23 @@ function update() {enemies
             {
                 if(game.input.y > player.body.y + player.body.height)
                 {
+                    climbing = true;
                     player.body.velocity.y = playerSpeed/2;
                 }
                 if(game.input.y < player.body.y - player.body.height)
                 {
+                    climbing = true;
                     player.body.velocity.y = -playerSpeed/2;
                 }
             }
         }
     }
+}
+
+function isOnLadder(bodyA,bodyB){
+    if(climbing)
+        bodyA.x = bodyB.x;
+    onLadder=true;
 }
 
 function collectGold (player, coin) {
