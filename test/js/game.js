@@ -266,6 +266,9 @@ function isOnLadder(bodyA,bodyB){
 }
 
 function isOnRope(bodyA,bodyB){
+    if(!dropping)
+        bodyA.y = bodyB.y;
+    
    onRope=true;
 }
 
