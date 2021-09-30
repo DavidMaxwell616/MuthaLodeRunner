@@ -11,6 +11,7 @@ const OBJECT_MAP = {
 'H' : 5, //ladder
 'S' : 6, //xLadder
 '@' : 7, //block
+'X' : 8, //false brick
 };
 const GAME_SCALE = 1.35;
 const DEBUG_MODE = false;
