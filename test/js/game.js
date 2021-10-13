@@ -11,8 +11,9 @@ var onLadder = false,
 onRope = false;
 var score = 0,
 scoreText;
-var playerSpeed = 250, 
-gravity = 500;
+var playerSpeed = 4;
+var enemySpeed = 4;
+var gravity = 1000;
 var levelData;
 var currLevel;
 var blocks;
@@ -101,6 +102,7 @@ function buildLevel(levelMap)
                     break;
                 case 'H':
                     ladders.add(makeSprite(blockX,blockY,'ladder',true));
+                    ///console.log(blockX,blockY);
                     break;
                 case 'S':
                     xladders.add(makeSprite(blockX,blockY,'ladder',false));
@@ -117,7 +119,7 @@ function buildLevel(levelMap)
                     player.y = blockY-10;
                     break;
                 case '0':
-                    createEnemy(blockX,blockY);  
+                    enemies.add(createEnemy(blockX,blockY));  
                 default:
                    break;
            }
@@ -134,6 +136,13 @@ function createEnemy(x,y){
     return sprite;
 }
 
+function moveEnemies(){
+enemies.forEach(enemy => {
+  if(player.x<enemy.x) enemy.x-=enemySpeed;  
+  if(player.x>enemy.x) enemy.x+=enemySpeed;  
+});
+}
+
 function makeSprite(x,y,type,visible)
 {
     var sprite = game.add.sprite(x, y, type);
@@ -145,7 +154,7 @@ function makeSprite(x,y,type,visible)
     return sprite;
 }
 
-function update() {enemies
+function update() {
     onLadder = false;
     onRope = false;
     onGround = false;
@@ -164,7 +173,9 @@ function update() {enemies
     game.physics.arcade.overlap(player, lode, collectGold);
     
     player.body.velocity.x = 0;
-
+    
+    moveEnemies();
+    
     if(goldCount ==0)
         xladders.forEach(ladder => {
         ladder.visible = true;       
@@ -180,20 +191,22 @@ if(onLadder && player.y-player.height/2==0){
  
 if(!player.dead)
     {
-        if (cursors.left.isDown)
+        //player.x = 2 * Math.round(player.x / 2);
+        //console.log(player.x);
+    if (cursors.left.isDown)
         {
             climbing = false;
-            player.body.velocity.x = -playerSpeed;
+            player.body.x-=playerSpeed;
         }
         else if (cursors.right.isDown)
         {
             climbing = false;
-            player.body.velocity.x = playerSpeed;
+            player.body.x+=playerSpeed;
         }
 
         if (cursors.up.isDown && player.body.touching.down)
         {
-            player.body.velocity.y = -playerSpeed;
+            player.body.y-=playerSpeed;;
         }
         if(onRope && !dropping)
         {
@@ -209,12 +222,12 @@ if(!player.dead)
             {
 
                 climbing = true;
-                player.body.velocity.y = -playerSpeed/2;
+                player.body.y -= playerSpeed;
             }
             if(cursors.down.isDown)
             {
                 climbing = true;
-                player.body.velocity.y = playerSpeed/2;
+                player.body.y += playerSpeed;
             }
             if((!cursors.up.isDown && !cursors.down.isDown) && !game.input.pointer1.isDown)
             {
@@ -222,8 +235,12 @@ if(!player.dead)
                 player.body.velocity.y = 0;
             }
         }
-      
-        if (game.input.pointer1.isDown || game.input.pointer2.isDown)
+
+    if(cursors.down.isDown ){
+       // player.x = 2 * Math.round(player.x / 2);
+    }
+
+    if (game.input.pointer1.isDown || game.input.pointer2.isDown)
         {   
             if (game.input.x < player.body.x - player.body.width) 
             {      
@@ -254,6 +271,7 @@ if(!player.dead)
         }
     }
 }
+
 function isOnGround(bodyA,bodyB){
     onGround = true;
     dropping=false;
