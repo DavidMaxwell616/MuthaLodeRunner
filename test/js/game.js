@@ -1,35 +1,6 @@
 var game = new Phaser.Game(896, 560, Phaser.AUTO, 'game', 
 { preload: preload, create: create, update: update });
 
-var player,
-enemy,
-platforms,
-ladders,
-cursors,
-lode;
-var onLadder = false,
-onRope = false;
-var score = 0,
-scoreText;
-var playerSpeed = 4;
-var enemySpeed = 4;
-var gravity = 1000;
-var levelData;
-var currLevel;
-var blocks;
-var solids;
-var ladders;
-var xladders;
-var lode;
-var ropes;
-var enemies;
-var goldCount = 0;
-var level =1;
-var hiscoreText;
-var hiscore = 0;
-var onGround = false;
-var climbing = false;
-var dropping = false;
 
 function create() {
     levelData = game.cache.getJSON('levelData');
