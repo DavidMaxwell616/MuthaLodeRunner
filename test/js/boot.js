@@ -27,16 +27,17 @@ var hiscore = 0;
 var onGround = false;
 var climbing = false;
 var dropping = false;
-var enemyMovePolicy = [ [0, 0, 0], //* move_map is used to find *//
-                   [0, 1, 1], //* wheather to move a enm   *//
-                   [1, 1, 1], //* by indexing into it with *//
-                   [1, 2, 1], //* enm_byte + num_enm +     *//
-                   [1, 2, 2], //* set_num to get a byte.   *//
-                   [2, 2, 2], //* then that byte is checked*//
-                   [2, 2, 3], //* for !=0 and then decrmnt *//
-                   [2, 3, 3], //* for next test until = 0  *// 
-                   [3, 3, 3], 
-                   [3, 3, 4],
-                   [3, 4, 4],
-                   [4, 4, 4]
-];
+const MOVE_STATE = {
+    'STILL':0,
+    'RIGHT':1,
+    'LEFT' :2,
+    'UP' : 3,
+    'DOWN' : 4,
+    'FALLING' : 5,
+    'BLAST_LEFT' : 6,
+    'BLAST_RIGHT' : 7,
+    'ROPE_RIGHT' : 8,
+    'ROPE_LEFT' :9,
+    'TRAPPED' : 10,
+    'CLIMBING_OUT' : 11
+}

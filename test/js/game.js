@@ -8,8 +8,7 @@ function create() {
     currLevel = levelData.levels['level-'+lvl];
     game.stage.backgroundColor = "#243166";
     score = 0;
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-
+ 
     blocks = game.add.group();
     solids = game.add.group();
     ladders = game.add.group();
@@ -20,11 +19,6 @@ function create() {
 
     player = game.add.sprite(32, game.world.height - 150, 'player');
     buildLevel(currLevel);
-
-    game.physics.arcade.enable(player);
-    player.body.bounce.y = 0.2;
-    player.body.gravity.y = gravity;
-    player.body.collideWorldBounds = true;
     player.dead = false;
     player.anchor.setTo(.5, .5);
 
@@ -87,7 +81,7 @@ function buildLevel(levelMap)
                     break;
                 case '&':
                     player.x = blockX;
-                    player.y = blockY-10;
+                    player.y = blockY;
                     break;
                 case '0':
                     enemies.add(createEnemy(blockX,blockY));  
@@ -101,16 +95,44 @@ function buildLevel(levelMap)
 
 function createEnemy(x,y){
     var sprite = game.add.sprite(x,y, 'enemy');
-    game.physics.arcade.enable(sprite);
-    sprite.body.allowGravity = true;
-    sprite.anchor.setTo(.5, .5);
     return sprite;
 }
 
 function moveEnemies(){
 enemies.forEach(enemy => {
-  if(player.x<enemy.x) enemy.x-=enemySpeed;  
-  if(player.x>enemy.x) enemy.x+=enemySpeed;  
+    var dx = player.x - enemy.x;
+    var dy = player.y - enemy.y;
+
+if(enemy.move != MOVE_STATE.FALLING)
+{
+if(dy==0)
+{
+    if(dx>0)
+    enemy.move = MOVE_STATE.RIGHT;
+    else
+    enemy.move = MOVE_STATE.LEFT;
+// if(Math.abs(dx) > Math.abs(dy)){
+    //   if(dx<0) enemy.move = MOVE_STATE.LEFT;
+    //   if(dx>0) enemy.move = MOVE_STATE.RIGHT;
+    //  }
+    //  else
+    //  {
+    //   if(dy<0) enemy.move = MOVE_STATE.UP;
+    //   if(dy>0) enemy.move = MOVE_STATE.DOWN;
+    //  }
+}
+
+    switch (enemy.move) {
+        case MOVE_STATE.LEFT:
+            enemy.x-=enemySpeed;            
+            break;
+        case MOVE_STATE.RIGHT:
+            enemy.x+=enemySpeed;            
+            break;
+        default:
+            break;
+ }
+}
 });
 }
 
@@ -129,28 +151,15 @@ function update() {
     onLadder = false;
     onRope = false;
     onGround = false;
-    player.body.gravity.y = gravity;
-    game.physics.arcade.collide(player, blocks, isOnGround);
-    game.physics.arcade.collide(player, solids, isOnGround);
-    game.physics.arcade.collide(lode, blocks);
-    game.physics.arcade.collide(enemies, blocks);
 
-    game.physics.arcade.overlap(player, blocks);
-    game.physics.arcade.overlap(player, solids);
-    game.physics.arcade.overlap(player, enemies, hitenemy);
-    game.physics.arcade.overlap(player, ladders, isOnLadder);
-    game.physics.arcade.overlap(player, xladders, isOnLadder);
-    game.physics.arcade.overlap(player, ropes, isOnRope);
-    game.physics.arcade.overlap(player, lode, collectGold);
-    
-    player.body.velocity.x = 0;
-    
     moveEnemies();
     
-    if(goldCount ==0)
-        xladders.forEach(ladder => {
-        ladder.visible = true;       
-    });
+//    player.isOnGround = 
+
+if(goldCount ==0)
+    xladders.forEach(ladder => {
+    ladder.visible = true;       
+});
 
 if(onLadder && player.y-player.height/2==0){
     destroyLevel();
@@ -164,47 +173,44 @@ if(!player.dead)
     {
         //player.x = 2 * Math.round(player.x / 2);
         //console.log(player.x);
-    if (cursors.left.isDown)
+    if (cursors.left.isDown && player.x-player.width/2>0)
         {
             climbing = false;
-            player.body.x-=playerSpeed;
+            player.x-=playerSpeed;
         }
-        else if (cursors.right.isDown)
+        else if (cursors.right.isDown && player.x+player.width/2< game.width)
         {
             climbing = false;
-            player.body.x+=playerSpeed;
+            player.x+=playerSpeed;
         }
 
-        if (cursors.up.isDown && player.body.touching.down)
+        if (cursors.up.isDown && player.touchingDown)
         {
-            player.body.y-=playerSpeed;;
+            player.y-=playerSpeed;;
         }
         if(onRope && !dropping)
         {
-            player.body.gravity.y = 0;
             if(cursors.down.isDown)
                 dropping = true;
          }
         if(onLadder)
         {
-            player.body.gravity.y = 0;
-            player.body.velocity.y = 0;
             if(cursors.up.isDown)
             {
 
                 climbing = true;
-                player.body.y -= playerSpeed;
+                player.y -= playerSpeed;
             }
             if(cursors.down.isDown)
             {
                 climbing = true;
-                player.body.y += playerSpeed;
+                player.y += playerSpeed;
             }
-            if((!cursors.up.isDown && !cursors.down.isDown) && !game.input.pointer1.isDown)
-            {
-                player.body.gravity.y = 0;
-                player.body.velocity.y = 0;
-            }
+            // if((!cursors.up.isDown && !cursors.down.isDown) && !game.input.pointer1.isDown)
+            // {
+            //     player.body.gravity.y = 0;
+            //     player.body.velocity.y = 0;
+            // }
         }
 
     if(cursors.down.isDown ){
