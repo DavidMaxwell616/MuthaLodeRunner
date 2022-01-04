@@ -1,4 +1,4 @@
-var game = new Phaser.Game(770,480, 
+var game = new Phaser.Game(1120,640, 
   Phaser.AUTO, 'phaser-example', 
 {preload: preload, create: create, update: update});
 
@@ -11,7 +11,6 @@ function create() {
 
 function gameCreate() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
-  game.physics.arcade.gravity.y = 500;
   graphics = game.add.graphics(0, 0);
 if (localStorage.getItem(localStorageName) == null)
     highScore = 0;
@@ -94,33 +93,27 @@ if (localStorage.getItem(localStorageName) == null)
           game.physics.arcade.enable(sprite);
           switch (tile) {
             case '#':
-              sprite.body.allowGravity = false;
               sprite.body.immovable = true;
               blocks.add(sprite);
               break;
             case 'H':
-              sprite.body.allowGravity = false;
               sprite.body.immovable = true;
               ladders.add(sprite);
               break;
             case 'S':
-              sprite.body.allowGravity = false;
               sprite.body.immovable = true;
               sprite.visible = false;
               xladders.add(sprite);
               break;
             case '$':
-              sprite.body.allowGravity = false;
               sprite.body.immovable = true;
               lode.add(sprite);
               break;
             case '@':
-              sprite.body.allowGravity = false;
               sprite.body.immovable = true;
                  solids.add(sprite);
               break;
               case '-':
-                sprite.body.allowGravity = false;
                 sprite.body.immovable = true;
                 rope.add(sprite);
               break;
@@ -151,15 +144,14 @@ if (localStorage.getItem(localStorageName) == null)
     sprite.anchor.setTo(0.5);
     game.physics.arcade.enable(sprite);
     sprite.frame = 5;
-    sprite.body.allowGravity = false;
     //sprite.body.immovable = true;
 }
 
   function drawStats(){
   levelText = drawInfoText(
     `LEVEL: ${level}`,
-    70,
-    game.height-30,
+    game.width*.1,
+    game.height-20,
     32,
     COLOR_WHITE,
     'IMPACT',
@@ -167,8 +159,8 @@ if (localStorage.getItem(localStorageName) == null)
   );
   livesText = drawInfoText(
     `LIVES: ${lives}`,
-    360,
-    game.height-30,
+    game.width*.5,
+    game.height-20,
     32,
     COLOR_WHITE,
     'IMPACT',
@@ -176,8 +168,8 @@ if (localStorage.getItem(localStorageName) == null)
   );
   scoreText = drawInfoText(
     `SCORE: ${score}`,
-    660,
-    game.height-30,
+    game.width*.9,
+    game.height-20,
     32,
     COLOR_WHITE,
     'IMPACT',
@@ -192,7 +184,9 @@ function update() {
   }
   //drawRectangle(player.x-5,player.y-5,10,10,0xffffff);
   player.onLadder = false;
-  game.physics.arcade.collide(player, blocks);
+  player.onRope = false;
+  player.onGround = false;
+  game.physics.arcade.collide(player, blocks, isOnGround);
   game.physics.arcade.collide(lode, blocks);
   game.physics.arcade.overlap(player, ladders, isOnLadder);
   game.physics.arcade.overlap(player, rope, isOnRope);
@@ -205,10 +199,8 @@ function update() {
   if(player.frame<21) player.frame = 21;
   if(player.frame<30) player.frame++; else player.frame = 21;
 }
-console.log(player.onLadder);
 if(player.onLadder)
 {
-  player.body.allowGravity = false;
   if(player.playerMode==PLAYER_STATE.CLIMBING)
     if(player.frame<20) player.frame++; else player.frame = 11;
   if (game.cursors.up.isDown && player.y>0) {
@@ -219,12 +211,9 @@ if(player.onLadder)
   {
     player.playerMode = PLAYER_STATE.STILL;
   }
-
 }
-else
-{
-  player.body.allowGravity = true;
-}
+if(!player.onGround)
+  player.y+=2;
 
 if(player.playerMode==PLAYER_STATE.LEFT || player.playerMode==PLAYER_STATE.RIGHT)
   player.frame++;
@@ -276,6 +265,11 @@ function playerRun(direction){
   player.frame = player.frame<11?player.frame++:player.frame=1;
   player.width = blockSizeX * scale ;
   player.x+=direction;
+}
+
+function isOnGround(sprite, ground)
+{
+  sprite.onGround = true;
 }
 
 function isOnLadder(sprite, ladder)

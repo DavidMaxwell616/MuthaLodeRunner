@@ -13,7 +13,7 @@ const OBJECT_MAP = {
 '@' : 7, //block
 'X' : 8, //false brick
 };
-const GAME_SCALE = 1.35;
+const GAME_SCALE = 2;
 const DEBUG_MODE = false;
 let graphics;
 let blockSizeX;
