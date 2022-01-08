@@ -183,9 +183,7 @@ function update() {
     return;
   }
   //drawRectangle(player.x-5,player.y-5,10,10,0xffffff);
-  player.onLadder = false;
-  player.onRope = false;
-  player.onGround = false;
+  
   game.physics.arcade.collide(player, blocks, isOnGround);
   game.physics.arcade.collide(lode, blocks);
   game.physics.arcade.overlap(player, ladders, isOnLadder);
@@ -194,52 +192,92 @@ function update() {
   game.physics.arcade.overlap(player, lode, CollectGold, null, this);
 
 
-  if(player.onRope)
-{
-  if(player.frame<21) player.frame = 21;
-  if(player.frame<30) player.frame++; else player.frame = 21;
-}
-if(player.onLadder)
-{
-  if(player.playerMode==PLAYER_STATE.CLIMBING)
-    if(player.frame<20) player.frame++; else player.frame = 11;
-  if (game.cursors.up.isDown && player.y>0) {
-    player.playerMode=PLAYER_STATE.CLIMBING
-    player.y--;
-   }
-  if(game.cursors.up.isUp && game.cursors.down.isUp && player.onLadder)
-  {
-    player.playerMode = PLAYER_STATE.STILL;
-  }
-}
-if(!player.onGround)
-  player.y+=2;
 
-if(player.playerMode==PLAYER_STATE.LEFT || player.playerMode==PLAYER_STATE.RIGHT)
-  player.frame++;
+//   if(player.onRope)
+// {
+//   //player.frame = 21;
+//   //if(player.frame<21) player.frame = 21;
+//   if(player.frame<39) player.frame++; else player.frame = 34;
+// }
+// if(player.onLadder)
+// {
+
+// if(player.playerMode==PLAYER_STATE.LEFT || player.playerMode==PLAYER_STATE.RIGHT)
+//   player.frame++;
   
-  if(player.playerMode!=PLAYER_STATE.FALLING){
+
+//MOVE PLAYER
+
+if(player.playerMode!=PLAYER_STATE.FALLING){
+//move left?
   if (game.cursors.left.isDown && player.x>player.width/2) {
   if(player.playerMode == PLAYER_STATE.STILL)
-    player.x-=PLAYER_SPEED;
     player.playerMode = PLAYER_STATE.LEFT;
-    playerRun(-PLAYER_SPEED);
   }
 
-  if (game.cursors.right.isDown && player.x<game.width-20) {
+//move right?
+if (game.cursors.right.isDown && player.x<game.width-20) {
     if(player.playerMode == PLAYER_STATE.STILL){
-    player.x+=PLAYER_SPEED;
-       player.playerMode = PLAYER_STATE.RIGHT;}
-    playerRun(PLAYER_SPEED);
+      player.playerMode = PLAYER_STATE.RIGHT;}
   }
-  
-  if(game.cursors.right.isUp && game.cursors.left.isUp && !player.onLadder)
+//move up?
+if (game.cursors.up.isDown && player.y>0) {
+    player.playerMode=PLAYER_STATE.UP;
+   }
+
+//move up?
+if(game.cursors.up.isUp && game.cursors.down.isUp && player.onLadder)
   {
     player.playerMode = PLAYER_STATE.STILL;
-    player.frame = 30;
   }
-  updateStats();
+  
+//key up
+if(game.cursors.right.isUp && game.cursors.left.isUp && !player.onLadder && !player.onRope)
+  {
+    player.playerMode = PLAYER_STATE.STILL;
+  }
+
+//move player based on state
+switch (player.playerMode) {
+  case PLAYER_STATE.STILL:
+    player.frame = 30;
+    break;
+  case PLAYER_STATE.RIGHT:
+    playerRun(PLAYER_SPEED);
+    break;
+  case PLAYER_STATE.LEFT:
+    playerRun(-PLAYER_SPEED);
+    break;
+  case PLAYER_STATE.UP:
+    if(player.onLadder){  
+      if(player.frame<20) player.frame++; else player.frame = 11;
+      player.y-=PLAYER_SPEED;
+    }
+    break;
+  case PLAYER_STATE.DOWN:
+    if(player.onLadder){  
+      if(player.frame<20) player.frame++; else player.frame = 11;
+      player.y+=PLAYER_SPEED;
+    }
+    break;
+  case PLAYER_STATE.ROPE_RIGHT:
+    player.frame = 30;
+    break;
+  case PLAYER_STATE.ROPE_LEFT:
+    player.frame = 30;
+    break;
+  case PLAYER_STATE.FALLING:
+    player.frame = 30;
+    break;
+  default:
+    break;
 }
+
+//falling
+if(!player.onGround && !player.onLadder && !player.onRope)
+  player.y+=2;
+}
+updateStats();
 }
 
 function drawRectangle(x,y,w,h,color){
@@ -262,7 +300,8 @@ function playerClimb(direction){
 function playerRun(direction){
   var scale = direction<0?1:-1;
   player.scale.x=scale;
-  player.frame = player.frame<11?player.frame++:player.frame=1;
+  console.log(player.frame);
+  player.frame = player.frame>11?player.frame=1:player.frame+1;
   player.width = blockSizeX * scale ;
   player.x+=direction;
 }

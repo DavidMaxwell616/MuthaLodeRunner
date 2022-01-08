@@ -30,9 +30,6 @@ let blocks;
 let levels;
 let solids;
 let rope;
-let onRope = false;
-let climbing = false;
-let running = false;
 let gameObjects = [];
 
 const COLOR_WHITE = 'rgb(255,255,255)';
@@ -56,7 +53,7 @@ let splash;
 var i=0;
 let fireKey;
 const ENEMY_SPEED = 1;
-const PLAYER_SPEED = 3;
+const PLAYER_SPEED = 5;
 const PLAYER_STATE = {
 'STILL':0,
 'RIGHT':1,
