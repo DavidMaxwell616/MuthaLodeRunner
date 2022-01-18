@@ -1,69 +1,253 @@
-const BASE_TILE_WIDTH = 20;
-const BASE_TILE_HEIGHT = 20;
-const MAP_WIDTH = 56;
-const MAP_HEIGHT = 32;
-const OBJECT_MAP = {
-' ': 0, //air
-'#': 1, //brick
-'$' : 2, //coin
-'0' : 3, //guard
-'-' : 4, //rope
-'H' : 5, //ladder
-'S' : 6, //xLadder
-'@' : 7, //block
-'X' : 8, //false brick
-};
-const GAME_SCALE = 2;
-const DEBUG_MODE = false;
-let graphics;
-let blockSizeX;
-let blockSizeY;
-let localStorageName = "MuthaLodeRunner";
+     const VERSION = "2.30c",
+    AI_VERSION = 4,
+    NO_OF_TILES_X = 28,
+    NO_OF_TILES_Y = 16,
+    BASE_TILE_X = 40,
+    BASE_TILE_Y = 44,
+    GROUND_TILE_X = 40,
+    GROUND_TILE_Y = 20,
+    TEXT_TILE_X = 40,
+    TEXT_TILE_Y = 44,
+    BASE_SCREEN_X = NO_OF_TILES_X * BASE_TILE_X,
+    BASE_SCREEN_Y = NO_OF_TILES_Y * BASE_TILE_Y + GROUND_TILE_Y + TEXT_TILE_Y,
+    MIN_SCALE = .5,
+    MAX_SCALE = 3,
+    MENU_ICON_X = 40,
+    MENU_ICON_Y = 36,
+    ICON_BORDER = 4,
+    BASE_ICON_X = MENU_ICON_X + 2 * ICON_BORDER,
+    KEYCODE_BKSPACE = 8,
+    KEYCODE_ENTER = 13,
+    KEYCODE_SPACE = 32,
+    KEYCODE_ESC = 27,
+    KEYCODE_X = 88,
+    KEYCODE_Y = 89,
+    KEYCODE_Z = 90,
+    KEYCODE_LEFT = 37,
+    KEYCODE_RIGHT =
+    39,
+    KEYCODE_UP = 38,
+    KEYCODE_DOWN = 40,
+    KEYCODE_SUBTRACT = 109,
+    KEYCODE_HYPHEN = 173,
+    KEYCODE_DASH = 189,
+    KEYCODE_DOT = 190,
+    KEYCODE_U = 85,
+    KEYCODE_O = 79,
+    KEYCODE_J = 74,
+    KEYCODE_L = 76,
+    KEYCODE_I = 73,
+    KEYCODE_K = 75,
+    KEYCODE_PERIOD = 190,
+    KEYCODE_COMMA = 188,
+    KEYCODE_A = 65,
+    KEYCODE_C = 67,
+    KEYCODE_D = 68,
+    KEYCODE_E = 69,
+    KEYCODE_G = 71,
+    KEYCODE_H = 72,
+    KEYCODE_Q = 81,
+    KEYCODE_R = 82,
+    KEYCODE_S = 83,
+    KEYCODE_T = 84,
+    KEYCODE_V = 86,
+    KEYCODE_W = 87,
+    KEYCODE_0 = 48,
+    KEYCODE_1 = 49,
+    KEYCODE_2 = 50,
+    KEYCODE_3 = 51,
+    KEYCODE_4 = 52,
+    KEYCODE_5 = 53,
+    KEYCODE_6 = 54,
+    KEYCODE_7 = 55,
+    KEYCODE_8 = 56,
+    KEYCODE_9 =
+    57,
+    SCORE_COMPLETE_LEVEL = 1500,
+    SCORE_COUNTER = 15,
+    SCORE_GET_GOLD = 250,
+    SCORE_IN_HOLE = 75,
+    SCORE_GUARD_DEAD = 75,
+    SCORE_WIN_PER_MAN = 42500,
+    SCORE_VALUE_PER_POINT = 100,
+    PLAY_NONE = 0,
+    PLAY_CLASSIC = 1,
+    PLAY_MODERN = 2,
+    PLAY_DEMO = 3,
+    PLAY_EDIT = 4,
+    PLAY_TEST = 5,
+    PLAY_AUTO = 6,
+    PLAY_DEMO_ONCE = 7,
+    GAME_START = 0,
+    GAME_RUNNING = 1,
+    GAME_FINISH = 2,
+    GAME_FINISH_SCORE_COUNT = 3,
+    GAME_WAITING = 4,
+    GAME_PAUSE = 5,
+    GAME_NEW_LEVEL = 6,
+    GAME_RUNNER_DEAD = 7,
+    GAME_OVER_ANIMATION = 8,
+    GAME_OVER = 9,
+    GAME_NEXT_LEVEL = 10,
+    GAME_PREV_LEVEL = 11,
+    GAME_LOADING = 12,
+    GAME_WIN_SCORE_COUNT = 13,
+    GAME_WIN = 14,
+    ACT_UNKNOWN = -1,
+    ACT_STOP = 0,
+    ACT_LEFT = 1,
+    ACT_RIGHT = 2,
+    ACT_UP = 3,
+    ACT_DOWN = 4,
+    ACT_FALL = 5,
+    ACT_FALL_BAR = 6,
+    ACT_DIG_LEFT = 7,
+    ACT_DIG_RIGHT = 8,
+    ACT_DIGGING = 9,
+    ACT_IN_HOLE = 10,
+    ACT_CLIMB_OUT = 11,
+    ACT_REBORN = 12,
+    EMPTY_T = 0,
+    BLOCK_T = 1,
+    SOLID_T = 2,
+    LADDR_T = 3,
+    BAR_T = 4,
+    TRAP_T = 5,
+    HLADR_T = 6,
+    GOLD_T = 7,
+    GUARD_T = 8,
+    RUNNER_T = 9,
+    REBORN_T = 16,
+    CLOSE_SCREEN_SPEED = 35,
+    MAX_OLD_GUARD = 6,
+    MAX_NEW_GUARD = 5,
+    RUNNER_LIFE = 5,
+    RUNNER_MAX_LIFE = 100,
+    MAX_TIME_COUNT = 999,
+    TICK_COUNT_PER_TIME = 16,
+    MAX_DEMO_WAIT_COUNT = 200 * TICK_COUNT_PER_TIME,
+    MAX_EDIT_LEVEL = 120,
+    MAX_HISCORE_RECORD =
+    10,
+    MAX_HISCORE_NAME_LENGTH = 12,
+    PLAY_DATA_SHARE = 998,
+    PLAY_DATA_USERDEF = 999,
+    THEME_APPLE2 = "APPLE2",
+    THEME_C64 = "C64",
+    STORAGE_LASTPLAY_MODE = "loderunner_lastplay",
+    STORAGE_CLASSIC_INFO = "loderunner_classicInfo",
+    STORAGE_MODERN_INFO = "loderunner_modernInfo",
+    STORAGE_DEMO_INFO = "loderunner_demoInfo",
+    STORAGE_FIRST_PLAY = "loderunner_firstRun",
+    STORAGE_MODERN_SCORE_INFO = "loderunner_modernScore",
+    STORAGE_USER_INFO = "loderunner_userInfo",
+    STORAGE_USER_SCORE_INFO = "loderunner_userScore",
+    STORAGE_EDIT_INFO = "loderunner_editInfo",
+    STORAGE_USER_LEVEL = "loderunner_userLevel",
+    STORAGE_TEST_LEVEL = "loderunner_testlevel",
+    STORAGE_HISCORE_INFO = "loderunner_hiScore",
+    STORAGE_LASTSCORE = "loderunner_lastScore",
+    STORAGE_PLAYER_NAME = "loderunner_player",
+    STORAGE_UID = "loderunner_uid",
+    STORAGE_GAMEID = "loderunner_gameid",
+    STORAGE_THEME_MODE = "loderunner_theme",
+    STORAGE_THEME_COLOR = "loderunner_color_",
+    STORAGE_REPEAT_ACTION = "loderunner_actRepeat",
+    STORAGE_GAMEPAD_MODE = "loderunner_gamepadMode",
+    STATE_DEMO_FAIL_BIT = 0,
+    STATE_GOD_MODE_BIT = 1,
+    LRWG_FILE_START_INFO =
+    "LODE RUNNER WEB GAME.";
 
-let player;
-let guards;
-let objects;
-let ladders;
-let xladders;
-let lode;
-let blocks;
-let levels;
-let solids;
-let rope;
-let gameObjects = [];
 
-const COLOR_WHITE = 'rgb(255,255,255)';
-let onLadder = false;
-let onXLadder = false;
-let score = 0;
-let scoreText;
-let lives = 3;
-let livesText;
-let level = 1;
-let currLevel;
-let levelText;
-let playerBlock;
-let onPlatform = false;
-let currLadder;
-let currRope;
-let totalCoins = 0;
-let letGo = false;
-let startGame = false;
-let splash;
-var i=0;
-let fireKey;
-const ENEMY_SPEED = 1;
-const PLAYER_SPEED = 5;
-const PLAYER_STATE = {
-'STILL':0,
-'RIGHT':1,
-'LEFT' :2,
-'UP' : 3,
-'DOWN' : 4,
-'FALLING' : 5,
-'BLAST_LEFT' : 6,
-'BLAST_RIGHT' : 7,
-'ROPE_RIGHT' : 8,
-'ROPE_LEFT' :9,
-'TRAPPED' : 10
-}
+var screenX1, 
+    screenY1, 
+    canvasX, 
+    canvasY, 
+    screenBorder, 
+    tileW, 
+    tileH, 
+    tileWScale, 
+    tileHScale, 
+    W2, 
+    W4, 
+    H2, 
+    H4, 
+    mainStageX, 
+    mainStageY, 
+    scroeStageX, 
+    scoreStageY, 
+    canvas, 
+    mainStage, 
+    scoreStage, 
+    loadingTxt, 
+    gameState, 
+    lastGameState, 
+    tileScale, 
+    xMove, 
+    yMove, 
+    speedMode = [14, 18, 23, 29, 35],
+    speedText = ["VERY SLOW", "SLOW", "NORMAL", "FAST", "VERY FAST"],
+    speed = 2,
+    demoSpeed = 35,
+    levelData,
+    curLevel = 1,
+    maxLevel = 1,
+    passedLevel = 0,
+    playMode = PLAY_CLASSIC,
+    playData = 1,
+    curTime = 0,
+    backgroundColor = "#250535",
+    playerName = "",
+    playerUId = "",
+    curGameId =
+    "",
+    curTheme = THEME_APPLE2,
+    dbName = "LodeRunner1";
+    var runner;
+    var gameStart = false;
+    var startGame = false;
+    const RUNNER_SPEED = .65,
+    DIG_SPEED = .68,
+    FILL_SPEED = .24,
+    GUARD_SPEED = .3,
+    FLASH_SPEED = .25,
+    COVER_PROGRESS_BAR_H = 32,
+    COVER_PROGRESS_UNDER_Y = 90,
+    COVER_RUNNER_UNDER_Y = 136,
+    COVER_SIDE_X = 56,
+    SIGNET_UNDER_X = 30,
+    SIGNET_UNDER_Y = 30,
+    GAME_SCALE =1;
+    var coverBitmap, titleBackground, remakeBitmap, signetBitmap, 
+    helpObj, helpBitmap, editHelpBitmap, mainMenuIconBitmap, 
+    mainMenuIconObj, selectIconBitmap, selectIconObj, champIconBitmap, 
+    champIconObj, demoIconBitmap, demoIconObj, shareIconBitmap, 
+    shareIconObj, pasteIconBitmap, pasteIconObj, soundOnIconBitmap, soundOffIconBitmap,
+    soundIconObj, helpIconBitmap, helpIconObj, infoObj, infoIconBitmap, 
+    infoIconObj, repeatActionOnIconBitmap, repeatActionOffIconBitmap, 
+    repeatActionIconObj, apple2IconBitmap, C64IconBitmap, themeIconObj, 
+    themeColorObj, checkBitmap, returnBitmap, select1Bitmap, nextBitmap, 
+    facebookBitmap, twitterBitmap, linkBitmap, editBitmap, openFolderBitmap, 
+    nextMapBitmap, prevMapBitmap, yesBitmap, noBitmap, coverPageLoad, 
+    noCache = "?" + VERSION + ".1051230";
+    const OBJECT_MAP = {
+        ' ': 'empty',
+        '#': 'brick',
+        '$' : 'gold',
+        '0' : 'guard',
+        '-' : 'rope',
+        'H' : 'ladder',
+        'S' : 'hLadder',
+        '@' : 'block',
+        'X' : 'false brick'
+        };
+    let ladders;
+    let hLadders;
+    let lode;
+    let blocks;
+    let levels;
+    let solids;
+    let rope;
+    let totalCoins = 0;
+    

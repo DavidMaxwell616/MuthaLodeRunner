@@ -1,22 +1,23 @@
 function mainMenuCreate(scene) {
-  splash = game.add.image(0, 0, 'splash');
+  splash = scene.add.image(0, 0, 'splash');
+  splash.anchor.setTo(0, 0);
   splash.width = game.width;
   splash.height = game.height;
-  maxxdaddy = game.add.image(game.width * 0.75, game.height * 0.91, 'maxxdaddy');
+  maxxdaddy = game.add.image(0, game.height * 0.92, 'maxxdaddy');
   game.input.onDown.addOnce(StartGame, this);
- game.fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-}
-
-function mainMenuUpdate() {
-  if (game.fireButton.isDown) {StartGame();}
-}
-
-function StartGame() {
-  if (game.fireButton.isDown) {
-    game.spaceKey = null;
-    splash.visible = false;
-    maxxdaddy.visible = false;
-    gameCreate();
-    startGame = true;
+  game.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+ 
+  game.input.keyboard.onUpCallback = function (e) {
+    if (e.keyCode == Phaser.Keyboard.SPACEBAR) 
+      StartGame(scene);
   }
+}
+
+function StartGame(scene){
+  if (startGame)
+  return;
+splash.visible = false;
+maxxdaddy.visible =false;
+startGame = true;
+gameCreate(scene);
 }
