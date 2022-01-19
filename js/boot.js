@@ -205,8 +205,8 @@ var screenX1,
     curTheme = THEME_APPLE2,
     dbName = "LodeRunner1";
     var runner;
-    var gameStart = false;
     var startGame = false;
+    var map = [];
     const RUNNER_SPEED = .65,
     DIG_SPEED = .68,
     FILL_SPEED = .24,

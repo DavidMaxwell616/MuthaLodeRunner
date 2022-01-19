@@ -3,9 +3,9 @@ var STATE_OK_TO_MOVE = 1,
 
 function moveRunner() {
     var b = runner.pos.x,
-        c = runner.pos.xOffset,
+        c = 0,
         a = runner.pos.y,
-        d = runner.pos.yOffset;
+        d = 0;
     var f = map[b][a].base;
     if (f == LADDR_T || f == BAR_T && 0 == d) f = STATE_OK_TO_MOVE;
     else if (0 > d) f = STATE_FALLING;

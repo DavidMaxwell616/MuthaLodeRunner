@@ -37,8 +37,10 @@ function gameCreate() {
 
 function buildLevel(levelMap) {
   for (let y = 0; y < levelMap.length; y++) {
+    map[y] = [];
    for (let x = 0; x < levelMap[y].length; x++) {
-      const tile = levelMap[y][x];
+    map[y][x] = {};
+    const tile = levelMap[y][x];
      const blockX = BASE_TILE_X * x+20;
      const blockY = BASE_TILE_Y * y;
      let sprite;
@@ -50,30 +52,53 @@ function buildLevel(levelMap) {
        blockSizeY = sprite.height;
        sprite.anchor.setTo(0.5);
        switch (tile) {
+         case ' ':
+          map[y][x].base = EMPTY_T;
+          map[y][x].act = EMPTY_T;
+          break;
          case '#':
+          map[y][x].base = BLOCK_T;
+          map[y][x].act = BLOCK_T;
            blocks.add(sprite);
            break;
          case 'H':
+          map[y][x].base = LADDR_T;
+          map[y][x].act = LADDR_T;
            ladders.add(sprite);
            break;
          case 'S':
-           sprite.visible = false;
+          map[y][x].base = HLADR_T;
+          map[y][x].act = EMPTY_T;
+          sprite.visible = false;
            hLadders.add(sprite);
            break;
          case '$':
+          map[y][x].base = GOLD_T;
+          map[y][x].act = EMPTY_T;
            lode.add(sprite);
            break;
          case '@':
-              solids.add(sprite);
+          map[y][x].base = SOLID_T;
+          map[y][x].act = SOLID_T;
+          solids.add(sprite);
            break;
            case '-':
-             rope.add(sprite);
+            map[y][x].base = BAR_T;
+            map[y][x].act = BAR_T;
+           rope.add(sprite);
            break;
            case '&':
-             runner.position.setTo(blockX,blockY);
+            map[y][x].base = EMPTY_T;
+            map[y][x].act = RUNNER_T;
+            runner.pos.x = blockX;
+            runner.pos.y = blockY;
+            runner.position.setTo(blockX,blockY);
+             runner.action = ACT_UNKNOWN;
              break;
            case '0':
-             createEnemy(blockX,blockY);  
+            map[y][x].base = EMPTY_T;
+            map[y][x].act = GUARD_T;
+            createEnemy(blockX,blockY);  
            break;
           
          default:
@@ -93,12 +118,13 @@ function createEnemy(x,y)
   }
 
 function update() {
-  if (!gameStart)
+  if (!startGame)
     return;
 
-  if (showintro) {
-    Do_Intro();
-    showintro = false;
-  } else {
-  }
+  // if (showintro) {
+  //   Do_Intro();
+  //   showintro = false;
+  // } else {
+    moveRunner();
+    //      goldComplete && 0 == runner.pos.y && 0 == runner.pos.yOffset ? gameState = GAME_FINISH : (++playTickTimer >= TICK_COUNT_PER_TIME && (playMode != PLAY_CLASSIC && playMode != PLAY_AUTO && playMode != PLAY_DEMO ? drawTime(1) : countTime(1), playTickTimer = 0), playMode != PLAY_AUTO && playMode != PLAY_DEMO && playMode != PLAY_DEMO_ONCE || playDemo(), recordMode && processRecordKey(), isDigging() ? processDigHole() : moveRunner(), gameState != GAME_RUNNER_DEAD && moveGuard(), 3 <= curAiVersion && (processGuardShake(), processFillHole(), processReborn()))
 }
