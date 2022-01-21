@@ -13,6 +13,7 @@ function gameCreate() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
   runner = game.add.sprite(0, 0, 'runner');
   runner.anchor.setTo(0.5, 0.5);
+  runner.pos = {x:0,y:0};
   runner.animations.add('runRight',[0,2], RUNNER_SPEED);
   runner.animations.add('runLeft', [3,5],RUNNER_SPEED);
   runner.animations.add('runUpDn',[6,7],RUNNER_SPEED);
