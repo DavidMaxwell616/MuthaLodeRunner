@@ -1,15 +1,15 @@
-     const VERSION = "2.30c",
+     const VERSION = "1.0c",
     AI_VERSION = 4,
     NO_OF_TILES_X = 28,
     NO_OF_TILES_Y = 16,
-    BASE_TILE_X = 40,
-    BASE_TILE_Y = 44,
-    GROUND_TILE_X = 40,
-    GROUND_TILE_Y = 20,
-    TEXT_TILE_X = 40,
+    BASE_TILE_W = 40,
+    BASE_TILE_H = 44,
+    GROUND_TILE_W = 40,
+    GROUND_TILE_H = 20,
+    TEXT_TILE_W = 40,
     TEXT_TILE_Y = 44,
-    BASE_SCREEN_X = NO_OF_TILES_X * BASE_TILE_X,
-    BASE_SCREEN_Y = NO_OF_TILES_Y * BASE_TILE_Y + GROUND_TILE_Y + TEXT_TILE_Y,
+    BASE_SCREEN_W = NO_OF_TILES_X * BASE_TILE_W,
+    BASE_SCREEN_H = NO_OF_TILES_Y * BASE_TILE_H + GROUND_TILE_H + TEXT_TILE_Y,
     MIN_SCALE = .5,
     MAX_SCALE = 3,
     MENU_ICON_X = 40,
@@ -159,7 +159,7 @@
     LRWG_FILE_START_INFO =
     "LODE RUNNER WEB GAME.";
 
-
+var soundFall=0;
 var screenX1, 
     screenY1, 
     canvasX, 
@@ -250,4 +250,9 @@ var screenX1,
     let solids;
     let rope;
     let totalCoins = 0;
-    
+    var maxTileX = NO_OF_TILES_X - 1,
+    maxTileY = NO_OF_TILES_Y - 1,
+    guard = [],
+    map, guardCount, goldCount, goldComplete;
+    const STATE_OK_TO_MOVE = 1,
+    STATE_FALLING = 2;

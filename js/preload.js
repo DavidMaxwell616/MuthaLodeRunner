@@ -9,9 +9,9 @@ function preload() {
     game.load.path = 'assets/images/';
     game.load.image('splash', 'cover.png');
     game.load.image('maxxdaddy', 'maxxdaddy.gif');
-    game.load.spritesheet('runner', 'runner.png', BASE_TILE_X, BASE_TILE_Y);
-    game.load.spritesheet('guard', 'guard.png', BASE_TILE_X, BASE_TILE_Y);
-    game.load.spritesheet('hole', 'hole.png', BASE_TILE_X, BASE_TILE_Y);
+    game.load.spritesheet('runner', 'runner.png', BASE_TILE_W, BASE_TILE_H);
+    game.load.spritesheet('guard', 'guard.png', BASE_TILE_W, BASE_TILE_H);
+    game.load.spritesheet('hole', 'hole.png', BASE_TILE_W, BASE_TILE_H);
     game.load.image("empty", "empty.png");
     game.load.image("brick", "brick.png");
     game.load.image("block", "block.png");
@@ -30,7 +30,7 @@ function preload() {
   
     game.load.start();
   }
-  
+
   function loadStart() {
     loadText.setText('Loading ...');
   }

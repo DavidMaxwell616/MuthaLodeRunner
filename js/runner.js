@@ -1,12 +1,9 @@
-var STATE_OK_TO_MOVE = 1,
-    STATE_FALLING = 2;
-
 function moveRunner() {
     var b = runner.pos.x,
         c = 0,
         a = runner.pos.y,
         d = 0;
-    var f = map[b][a].base;
+    var f = map[b][a]?.base;
     if (f == LADDR_T || f == BAR_T && 0 == d) f = STATE_OK_TO_MOVE;
     else if (0 > d) f = STATE_FALLING;
     else if (a < maxTileY) {
@@ -30,6 +27,7 @@ function moveRunner() {
     else {
         f = ACT_STOP;
         var g = 1;
+        console.log.log(keyAction)
         switch (keyAction) {
             case ACT_UP:
                 g = 0 >= a || (e = map[b][a - 1].act) == BLOCK_T || e == SOLID_T || e == TRAP_T;
@@ -140,17 +138,20 @@ function runnerMoveStep(b, c) {
     l == ACT_RIGHT && (d += xMove, 0 < d && (d = 0));
     if (b == ACT_STOP) runner.action == ACT_FALL && (soundStop(soundFall), themeSoundPlay("down")), runner.action != ACT_STOP && (runner.sprite.stop(), runner.action = ACT_STOP);
     else {
-        runner.sprite.x = (a * tileW + d) * tileScale | 0;
-        runner.sprite.y = (f * tileH + e) * tileScale | 0;
+        runner.x = (a * tileW + d) * tileScale | 0;
+        runner.y = (f * tileH + e) * tileScale | 0;
         runner.pos = {
             x: a,
             y: f,
             xOffset: d,
             yOffset: e
         };
-        m != k && (runner.sprite.gotoAndPlay(k), runner.shape =
-            k);
-        b != runner.action && (runner.action == ACT_FALL ? (soundStop(soundFall), themeSoundPlay("down")) : b == ACT_FALL && soundPlay(soundFall), runner.sprite.play());
+        
+        m != k && (runner.animations.play(k, 2, false), runner.shape = k);
+        b != runner.action && (runner.action == ACT_FALL ? 
+        (soundStop(soundFall), themeSoundPlay("down")) : 
+        b == ACT_FALL && soundPlay(soundFall), runner.animations.play());
+        
         if (b == ACT_LEFT || b == ACT_RIGHT) runner.lastLeftRight = b;
         runner.action = b
     }
@@ -158,9 +159,21 @@ function runnerMoveStep(b, c) {
     map[a][f].base == TRAP_T && map[a][f].bitmap.set({
         alpha: .5
     });
-    map[a][f].base == GOLD_T && (!d && 0 <= e && e < H4 || !e && 0 <= d && d < W4 || f < maxTileY && map[a][f + 1].base == LADDR_T && e < H4) && (removeGold(a, f), themeSoundPlay("getGold"), decGold(), playMode == PLAY_CLASSIC || playMode == PLAY_AUTO || playMode ==
+    map[a][f].base == GOLD_T && (!d && 0 <= e && e < H4 || !e && 0 <= d && d < W4
+         || f < maxTileY && map[a][f + 1].base == LADDR_T && e < H4) 
+         && (removeGold(a, f), themeSoundPlay("getGold"), decGold(), 
+         playMode == PLAY_CLASSIC || playMode == PLAY_AUTO || playMode ==
         PLAY_DEMO ? drawScore(SCORE_GET_GOLD) : drawGold(1));
     checkCollision(a, f)
+}
+
+function themeSoundPlay(x){
+
+}
+
+function soundPlay(x)
+{
+
 }
 
 function decGold() {

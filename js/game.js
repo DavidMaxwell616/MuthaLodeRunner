@@ -1,4 +1,4 @@
-const game = new Phaser.Game(BASE_SCREEN_X, BASE_SCREEN_Y, Phaser.ARCADE, 'game', {
+const game = new Phaser.Game(BASE_SCREEN_W, BASE_SCREEN_H, Phaser.ARCADE, 'game', {
   preload,
   create,
   update,
@@ -11,6 +11,10 @@ function create() {
 
 function gameCreate() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
+  guard = [];
+  keyAction = ACT_STOP;
+  goldCount = guardCount = goldComplete = 0;
+  dspTrapTile = 0;
   runner = game.add.sprite(0, 0, 'runner');
   runner.anchor.setTo(0.5, 0.5);
   runner.pos = {x:0,y:0};
@@ -42,8 +46,8 @@ function buildLevel(levelMap) {
    for (let x = 0; x < levelMap[y].length; x++) {
     map[y][x] = {};
     const tile = levelMap[y][x];
-     const blockX = BASE_TILE_X * x+20;
-     const blockY = BASE_TILE_Y * y;
+     const blockX = BASE_TILE_W * x+20;
+     const blockY = BASE_TILE_H * y;
      let sprite;
      if (tile === '$') totalCoins++;
      const value = OBJECT_MAP[tile];
@@ -91,11 +95,11 @@ function buildLevel(levelMap) {
            case '&':
             map[y][x].base = EMPTY_T;
             map[y][x].act = RUNNER_T;
-            runner.pos.x = blockX;
-            runner.pos.y = blockY;
+            runner.pos.x = x;
+            runner.pos.y = y;
             runner.position.setTo(blockX,blockY);
-             runner.action = ACT_UNKNOWN;
-             break;
+            runner.action = ACT_UNKNOWN;
+            break;
            case '0':
             map[y][x].base = EMPTY_T;
             map[y][x].act = GUARD_T;
@@ -111,7 +115,7 @@ function buildLevel(levelMap) {
        //   gameObjects.push(sprite);
    }
  }
-}
+ }
 
 function createEnemy(x,y)
   {
@@ -121,11 +125,10 @@ function createEnemy(x,y)
 function update() {
   if (!startGame)
     return;
-
   // if (showintro) {
   //   Do_Intro();
   //   showintro = false;
   // } else {
-    moveRunner();
+  moveRunner();
     //      goldComplete && 0 == runner.pos.y && 0 == runner.pos.yOffset ? gameState = GAME_FINISH : (++playTickTimer >= TICK_COUNT_PER_TIME && (playMode != PLAY_CLASSIC && playMode != PLAY_AUTO && playMode != PLAY_DEMO ? drawTime(1) : countTime(1), playTickTimer = 0), playMode != PLAY_AUTO && playMode != PLAY_DEMO && playMode != PLAY_DEMO_ONCE || playDemo(), recordMode && processRecordKey(), isDigging() ? processDigHole() : moveRunner(), gameState != GAME_RUNNER_DEAD && moveGuard(), 3 <= curAiVersion && (processGuardShake(), processFillHole(), processReborn()))
 }
